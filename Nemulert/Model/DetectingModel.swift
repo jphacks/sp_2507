@@ -28,52 +28,50 @@ final class DetectingModel {
     private var dozingCount: Int = 0
 
     func onAppear() async {
-        Task {
-            try await AlarmManager.shared.requestAuthorization()
-        }
-
         do {
-            _ = try await setAlarm()
+            _ = try await AlarmManager.shared.requestAuthorization()
         } catch {
             print(error)
         }
 
-//        let queue = OperationQueue()
-//        queue.name = "co.furari.Nemulert.headphone_motion_update"
-//        queue.maxConcurrentOperationCount = 1
-//        queue.qualityOfService = .background
-//        do {
-//            for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-//                Task { @MainActor in
-//                    if let startingPose = self.startingPose {
-//                        motion.attitude.multiply(byInverseOf: startingPose)
-//                    } else {
-//                        self.startingPose = motion.attitude
-//                    }
-//                    self.motion = motion
-//                    self.motions.append(motion)
-//                    if self.motions.count >= 100 {
-//                        do {
-//                            let motions = self.motions.prefix(100)
-//                            self.dozing = try self.predict(motions: Array(motions))
-//                            if self.dozing.isDozing {
-//                                self.dozingCount += 1
-//                            } else {
-//                                self.dozingCount = 0
-//                            }
-//                            if self.dozingCount >= 3 {
-//                                _ = try await self.setAlarm()
-//                            }
-//                        } catch {
-//                            print(error)
-//                        }
-//                        self.motions.removeAll()
-//                    }
-//                }
-//            }
-//        } catch {
-//            print(error)
-//        }
+        let queue = OperationQueue()
+        queue.name = "co.furari.Nemulert.headphone_motion_update"
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .background
+        do {
+            for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
+                try await handleMotion(motion)
+            }
+        } catch {
+            print(error)
+        }
+    }
+
+    private func handleMotion(_ motion: CMDeviceMotion) async throws {
+        if let startingPose = self.startingPose {
+            motion.attitude.multiply(byInverseOf: startingPose)
+        } else {
+            self.startingPose = motion.attitude
+        }
+        self.motion = motion
+        self.motions.append(motion)
+        if self.motions.count >= 100 {
+            do {
+                let motions = self.motions.prefix(100)
+                self.dozing = try self.predict(motions: Array(motions))
+                if self.dozing.isDozing {
+                    self.dozingCount += 1
+                } else {
+                    self.dozingCount = 0
+                }
+                if self.dozingCount >= 3 {
+                    _ = try await self.setAlarm()
+                }
+            } catch {
+                print(error)
+            }
+            self.motions.removeAll()
+        }
     }
 
     private func predict(motions: [CMDeviceMotion]) throws -> Dozing {
