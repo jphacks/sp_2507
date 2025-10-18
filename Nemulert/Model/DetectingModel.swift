@@ -91,10 +91,6 @@ final class DetectingModel {
     }
 
     private func setAlarm() async throws -> Alarm {
-        let countdownDuration = Alarm.CountdownDuration(
-            preAlert: 60,
-            postAlert: 60
-        )
         let stopButton = AlarmButton(
             text: "Back to work",
             textColor: .white,
@@ -104,11 +100,16 @@ final class DetectingModel {
             title: "Wake up!!",
             stopButton: stopButton
         )
-        let attributes = AlarmAttributes<DozingData>(
+        let attributes = AlarmAttributes(
             presentation: AlarmPresentation(
                 alert: presentation
             ),
+            metadata: DozingData(),
             tintColor: Color.orange
+        )
+        let countdownDuration = Alarm.CountdownDuration(
+            preAlert: 60,
+            postAlert: 60
         )
         let configuration = AlarmManager.AlarmConfiguration(
             countdownDuration: countdownDuration,
