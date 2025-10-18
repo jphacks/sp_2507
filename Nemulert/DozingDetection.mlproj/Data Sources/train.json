@@ -1,0 +1,51 @@
+{
+  "activityEntities" : [
+    "dataSourceTrainingStarted",
+    [
+      {
+        "createdDate" : "2025-10-18T09:23:59Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "DAA1C432-2B5C-482D-9EEF-4D48D1A97F93",
+        "subtitle" : "DozingDetection 1",
+        "title" : "Used By"
+      }
+    ],
+    "dataSourceMetrics",
+    [
+      {
+        "createdDate" : "2025-10-18T09:23:59Z",
+        "event" : "dataSourceMetrics",
+        "id" : "4241D08D-5F96-429E-AB49-B503234AC7FA",
+        "subtitle" : "5 Classes, 107 Items",
+        "title" : "Data Summary"
+      }
+    ],
+    "dataSourceCreated",
+    [
+      {
+        "createdDate" : "2025-10-18T09:23:31Z",
+        "event" : "dataSourceCreated",
+        "id" : "45DDF45C-F38B-440F-BA24-ADBDA36A58EF",
+        "subtitle" : "train",
+        "title" : "Data Source Created"
+      }
+    ]
+  ],
+  "createdDate" : "2025-10-18T09:23:31Z",
+  "dataPathRelativeToProjectURL" : "../../data/train/",
+  "dataResult" : {
+    "createdDate" : "2025-10-18T09:23:31Z",
+    "dataSourceID" : "C61B2DC1-C17B-4FD9-8A70-09C3AB2417F3",
+    "dataURL" : "file:///Users/tomarioka/Developer/sp_2507/data/train/"
+  },
+  "dataURL" : "file:///Users/tomarioka/Developer/sp_2507/data/train/",
+  "experimentIDs" : [
+    "D98E5166-FB9D-445F-BF76-87219D6621FE"
+  ],
+  "id" : "C61B2DC1-C17B-4FD9-8A70-09C3AB2417F3",
+  "modifiedDate" : "2025-10-18T09:23:59Z",
+  "pathType" : 0,
+  "preferredFilename" : "train",
+  "title" : "train",
+  "version" : "1.0"
+}

@@ -1,0 +1,31 @@
+{
+  "activityEntities" : [
+    "dataSourceCreated",
+    [
+      {
+        "createdDate" : "2025-10-18T09:23:49Z",
+        "event" : "dataSourceCreated",
+        "id" : "434D5221-9AF4-4A59-97A0-3E851852CC4C",
+        "subtitle" : "test",
+        "title" : "Data Source Created"
+      }
+    ]
+  ],
+  "createdDate" : "2025-10-18T09:23:49Z",
+  "dataPathRelativeToProjectURL" : "../../data/test/",
+  "dataResult" : {
+    "createdDate" : "2025-10-18T09:23:49Z",
+    "dataSourceID" : "DE0851DC-1C5C-4478-A072-40706AD6CB78",
+    "dataURL" : "file:///Users/tomarioka/Developer/sp_2507/data/test/"
+  },
+  "dataURL" : "file:///Users/tomarioka/Developer/sp_2507/data/test/",
+  "experimentIDs" : [
+    "D98E5166-FB9D-445F-BF76-87219D6621FE"
+  ],
+  "id" : "DE0851DC-1C5C-4478-A072-40706AD6CB78",
+  "modifiedDate" : "2025-10-18T09:23:49Z",
+  "pathType" : 0,
+  "preferredFilename" : "test",
+  "title" : "test",
+  "version" : "1.0"
+}
