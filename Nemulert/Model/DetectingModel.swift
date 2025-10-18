@@ -95,7 +95,7 @@ final class DetectingModel {
     private func setAlarm() async throws -> Alarm {
         let stopButton = AlarmButton(
             text: "Back to Work",
-            textColor: .white,
+            textColor: .orange,
             systemImageName: "stop.fill"
         )
         let alert = AlarmPresentation.Alert(
@@ -109,9 +109,8 @@ final class DetectingModel {
             alert: alert,
             countdown: countDown
         )
-        let attributes = AlarmAttributes(
+        let attributes = AlarmAttributes<DozingData>(
             presentation: presentation,
-            metadata: DozingData(),
             tintColor: Color.orange
         )
         let countdownDuration = Alarm.CountdownDuration(

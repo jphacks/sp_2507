@@ -59,6 +59,7 @@ struct AlarmLiveActivity: Widget {
                             .font(.largeTitle)
                             .monospacedDigit()
                             .foregroundStyle(.orange)
+                            .multilineTextAlignment(.trailing)
 
                     default:
                         EmptyView()
@@ -69,7 +70,6 @@ struct AlarmLiveActivity: Widget {
 
                     Button("Back to Work", intent: AlarmActionIntent(id: alarmID))
                         .buttonStyle(.glassProminent)
-                        .buttonSizing(.fitted)
                         .tint(.orange)
                 }
             } compactLeading: {
@@ -81,6 +81,8 @@ struct AlarmLiveActivity: Widget {
                     Text(countdown.fireDate, style: .timer)
                         .monospacedDigit()
                         .foregroundStyle(.orange)
+                        .frame(maxWidth: 48)
+                        .multilineTextAlignment(.trailing)
 
                 default:
                     EmptyView()
