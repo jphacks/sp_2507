@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F12CC8512EA3273100589185 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8502EA3273100589185 /* Dependencies */; };
 		F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8522EA3273100589185 /* DependenciesMacros */; };
+		F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8552EA3282E00589185 /* HeadphoneMotion */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */,
+				F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */,
 				F12CC8512EA3273100589185 /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,6 +136,7 @@
 			packageProductDependencies = (
 				F12CC8502EA3273100589185 /* Dependencies */,
 				F12CC8522EA3273100589185 /* DependenciesMacros */,
+				F12CC8552EA3282E00589185 /* HeadphoneMotion */,
 			);
 			productName = Nemulert;
 			productReference = F1421CBE2EA14838004A5AA6 /* Nemulert.app */;
@@ -220,6 +223,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F1421CBF2EA14838004A5AA6 /* Products */;
@@ -669,6 +673,14 @@
 				minimumVersion = 1.10.0;
 			};
 		};
+		F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kantacky/kantacky-kit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -681,6 +693,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = DependenciesMacros;
+		};
+		F12CC8552EA3282E00589185 /* HeadphoneMotion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */;
+			productName = HeadphoneMotion;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

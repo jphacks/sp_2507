@@ -1,5 +1,5 @@
 {
-  "originHash" : "8823f42c121e2bd59c7065deafaa6b94a0ad3634a0538fbca4b0a4fb79b4fb03",
+  "originHash" : "2f2023544884c2f7960c5218bf9df081989668f3c988b2ea01970c3d0b725007",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "5928286acce13def418ec36d05a001a9641086f2",
         "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "kantacky-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kantacky/kantacky-kit",
+      "state" : {
+        "revision" : "c7843d08c20b0fb7557d08833a1bfa94c3b042b4",
+        "version" : "0.1.0"
       }
     },
     {
