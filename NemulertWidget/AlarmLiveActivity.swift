@@ -37,7 +37,7 @@ struct AlarmLiveActivity: Widget {
                     }
 
                     Button(intent: AlarmActionIntent(id: alarmID)) {
-                        Image(systemName: "stop")
+                        Image(systemName: "stop.fill")
                     }
                     .buttonStyle(.glassProminent)
                     .buttonBorderShape(.circle)
@@ -60,24 +60,17 @@ struct AlarmLiveActivity: Widget {
                             .monospacedDigit()
                             .foregroundStyle(.orange)
 
-                    case .alert:
-                        Text("Wake Up!")
-                            .font(.largeTitle)
-
                     default:
                         EmptyView()
                     }
                 }
-                DynamicIslandExpandedRegion(.center) {
+                DynamicIslandExpandedRegion(.bottom) {
                     let alarmID = context.state.alarmID
 
-                    Button(intent: AlarmActionIntent(id: alarmID)) {
-                        Image(systemName: "stop")
-                    }
-                    .buttonStyle(.glassProminent)
-                    .buttonBorderShape(.circle)
-                    .font(.largeTitle)
-                    .tint(.orange)
+                    Button("Back to Work", intent: AlarmActionIntent(id: alarmID))
+                        .buttonStyle(.glassProminent)
+                        .buttonSizing(.fitted)
+                        .tint(.orange)
                 }
             } compactLeading: {
                 Image(systemName: "alarm.fill")
@@ -88,10 +81,6 @@ struct AlarmLiveActivity: Widget {
                     Text(countdown.fireDate, style: .timer)
                         .monospacedDigit()
                         .foregroundStyle(.orange)
-
-                case .alert:
-                    Text("Wake Up!")
-                        .font(.largeTitle)
 
                 default:
                     EmptyView()

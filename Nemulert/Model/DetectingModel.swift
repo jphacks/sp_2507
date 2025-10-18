@@ -96,7 +96,7 @@ final class DetectingModel {
         let stopButton = AlarmButton(
             text: "Back to Work",
             textColor: .white,
-            systemImageName: "stop"
+            systemImageName: "stop.fill"
         )
         let alert = AlarmPresentation.Alert(
             title: "Wake Up!",
