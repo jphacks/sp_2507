@@ -5,6 +5,7 @@
 //  Created by 藤間里緒香 on 2025/10/18.
 //
 
+import CoreML
 import CoreMotion
 import Foundation
 import HeadphoneMotion
@@ -33,5 +34,22 @@ final class DetectingModel {
         } catch {
             print(error)
         }
+    }
+
+    private func predict(motions: [CMDeviceMotion]) throws -> Dozing {
+        let configuration = MLModelConfiguration()
+        let model = try DozingDetection(configuration: configuration)
+        let input = DozingDetectionInput(
+            attitude_pitch: try MLMultiArray(motions.map { $0.attitude.pitch }),
+            attitude_roll: try MLMultiArray(motions.map { $0.attitude.roll }),
+            attitude_yaw: try MLMultiArray(motions.map { $0.attitude.yaw }),
+            rotation_rate_x: try MLMultiArray(motions.map { $0.rotationRate.x }),
+            rotation_rate_y: try MLMultiArray(motions.map { $0.rotationRate.y }),
+            rotation_rate_z: try MLMultiArray(motions.map { $0.rotationRate.z }),
+            stateIn: try MLMultiArray(shape: [400], dataType: .double)
+        )
+        let output = try model.prediction(input: input)
+        print("\(output.label) detected.")
+        return Dozing(rawValue: output.label) ?? .idle
     }
 }
