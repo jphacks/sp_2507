@@ -1,0 +1,18 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  FASTLANE: bundle exec fastlane
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+    silent: true
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - bundle install
+      - "{{.FASTLANE}} match_fetch_development"
