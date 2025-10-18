@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		388C526A2EA332D400E18784 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 388C52692EA332D400E18784 /* Lottie */; };
 		F12CC8512EA3273100589185 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8502EA3273100589185 /* Dependencies */; };
 		F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8522EA3273100589185 /* DependenciesMacros */; };
 		F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8552EA3282E00589185 /* HeadphoneMotion */; };
@@ -74,6 +75,7 @@
 				F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */,
 				F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */,
 				F12CC8512EA3273100589185 /* Dependencies in Frameworks */,
+				388C526A2EA332D400E18784 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +139,7 @@
 				F12CC8502EA3273100589185 /* Dependencies */,
 				F12CC8522EA3273100589185 /* DependenciesMacros */,
 				F12CC8552EA3282E00589185 /* HeadphoneMotion */,
+				388C52692EA332D400E18784 /* Lottie */,
 			);
 			productName = Nemulert;
 			productReference = F1421CBE2EA14838004A5AA6 /* Nemulert.app */;
@@ -224,6 +227,7 @@
 			packageReferences = (
 				F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */,
+				388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F1421CBF2EA14838004A5AA6 /* Products */;
@@ -665,6 +669,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 		F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
@@ -684,6 +696,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		388C52692EA332D400E18784 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
 		F12CC8502EA3273100589185 /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
