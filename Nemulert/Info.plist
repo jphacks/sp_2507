@@ -7,5 +7,7 @@
 		<string>en</string>
 		<string>ja</string>
 	</array>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>This app sets alarm when you start to doze.</string>
 </dict>
 </plist>
