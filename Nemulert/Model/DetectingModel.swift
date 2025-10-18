@@ -5,23 +5,38 @@
 //  Created by 藤間里緒香 on 2025/10/18.
 //
 
+import AlarmKit
 import AsyncAlgorithms
 import CoreML
 import CoreMotion
 import Foundation
 import HeadphoneMotion
 import Observation
+import SwiftUI
 
 @Observable
 final class DetectingModel {
-    var motion: CMDeviceMotion?
-    var startingPose: CMAttitude?
-    var motions: [CMDeviceMotion] = []
-    var dozing: Dozing = .idle
+    private let alarmID = UUID()
+    private let queueName = "co.furari.Nemulert.headphone_motion_update"
+
+    @ObservationIgnored
+    private var motion: CMDeviceMotion?
+    @ObservationIgnored
+    private var startingPose: CMAttitude?
+    @ObservationIgnored
+    private var motions: [CMDeviceMotion] = []
+    @ObservationIgnored
+    private var dozing: Dozing = .idle
+    @ObservationIgnored
+    private var dozingCount: Int = 0
 
     func onAppear() async {
+        Task {
+            try await AlarmManager.shared.requestAuthorization()
+        }
+
         let queue = OperationQueue()
-        queue.name = "co.furari.Nemulert.headphone_motion_update"
+        queue.name = queueName
         queue.maxConcurrentOperationCount = 1
         queue.qualityOfService = .background
         do {
@@ -33,12 +48,19 @@ final class DetectingModel {
                         self.startingPose = motion.attitude
                     }
                     self.motion = motion
-//                    print(motion.attitude.debugDescription)
                     self.motions.append(motion)
                     if self.motions.count >= 100 {
                         do {
                             let motions = self.motions.prefix(100)
                             self.dozing = try self.predict(motions: Array(motions))
+                            if self.dozing.isDozing {
+                                self.dozingCount += 1
+                            } else {
+                                self.dozingCount = 0
+                            }
+                            if self.dozingCount >= 3 {
+                                await self.setAlarm()
+                            }
                         } catch {
                             print(error)
                         }
@@ -66,6 +88,33 @@ final class DetectingModel {
         let output = try model.prediction(input: input)
         print("\(output.label) detected.")
         return Dozing(rawValue: output.label) ?? .idle
+    }
+
+    private func setAlarm() async {
+        let countdownDuration = Alarm.CountdownDuration(
+            preAlert: 60,
+            postAlert: 60
+        )
+        let stopButton = AlarmButton(
+            text: "Back to work",
+            textColor: .black,
+            systemImageName: "stop.circle"
+        )
+        let presentation = AlarmPresentation.Alert(
+            title: "",
+            stopButton: stopButton
+        )
+        let attributes = AlarmAttributes<DozingData>(
+            presentation: AlarmPresentation(
+                alert: presentation
+            ),
+            tintColor: Color.orange
+        )
+        let configuration = AlarmManager.AlarmConfiguration(
+            countdownDuration: countdownDuration,
+            attributes: attributes
+        )
+        _ = try? await AlarmManager.shared.schedule(id: alarmID, configuration: configuration)
     }
 }
 

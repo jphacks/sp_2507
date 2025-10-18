@@ -11,14 +11,11 @@ struct DetectingScreen: View {
     @State private var model = DetectingModel()
 
     var body: some View {
-        VStack {
-            LottieView(name: "Nemulert")
-
-            Text(model.dozing.rawValue)
-        }
-        .task {
-            await model.onAppear()
-        }
+        LottieView(name: "Nemulert")
+            .padding()
+            .task {
+                await model.onAppear()
+            }
     }
 }
 
