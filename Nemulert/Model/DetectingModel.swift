@@ -16,6 +16,7 @@ import SwiftUI
 
 @Observable
 final class DetectingModel {
+    private var isConnected: Bool = false
     @ObservationIgnored
     private var motion: CMDeviceMotion?
     @ObservationIgnored
@@ -26,24 +27,59 @@ final class DetectingModel {
     private var dozing: Dozing = .idle
     @ObservationIgnored
     private var dozingCount: Int = 0
+    @ObservationIgnored
+    nonisolated(unsafe) private var motionUpdateTask: Task<Void, Never>?
 
     func onAppear() async {
-        do {
-            _ = try await AlarmManager.shared.requestAuthorization()
-        } catch {
-            print(error)
-        }
+        await withTaskGroup { group in
+            group.addTask {
+                do {
+                    _ = try await AlarmManager.shared.requestAuthorization()
+                } catch {
+                    print(error)
+                }
 
-        let queue = OperationQueue()
-        queue.name = "co.furari.Nemulert.headphone_motion_update"
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .background
-        do {
-            for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-                try await handleMotion(motion)
+                await self.restartMotionUpdateTask()
             }
-        } catch {
-            print(error)
+
+            group.addTask {
+                for await isConnected in HeadphoneMotionManager().isConnectedStream {
+                    print("Headphone connection status changed: \(isConnected ? "Connected" : "Disconnected")")
+                    Task { @MainActor in
+                        self.isConnected = isConnected
+                    }
+
+                    if isConnected {
+                        await self.restartMotionUpdateTask()
+                    }
+                }
+            }
+        }
+    }
+
+    private func restartMotionUpdateTask() async {
+        self.motionUpdateTask?.cancel()
+        await Task { @MainActor in
+            self.dozing = .idle
+            self.dozingCount = 0
+            self.motionUpdateTask = self.getMotionUpdateTask()
+        }.value
+        await self.motionUpdateTask?.value
+    }
+
+    private func getMotionUpdateTask() -> Task<Void, Never>? {
+        Task {
+            let queue = OperationQueue()
+            queue.name = "co.furari.Nemulert.headphone_motion_update"
+            queue.maxConcurrentOperationCount = 1
+            queue.qualityOfService = .background
+            do {
+                for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
+                    try await self.handleMotion(motion)
+                }
+            } catch {
+                print(error)
+            }
         }
     }
 
@@ -56,19 +92,21 @@ final class DetectingModel {
         self.motion = motion
         self.motions.append(motion)
         if self.motions.count >= 100 {
-            do {
-                let motions = self.motions.prefix(100)
-                self.dozing = try self.predict(motions: Array(motions))
-                if self.dozing.isDozing {
-                    self.dozingCount += 1
-                } else {
-                    self.dozingCount = 0
+            if try AlarmManager.shared.alarms.isEmpty {
+                do {
+                    let motions = self.motions.prefix(100)
+                    self.dozing = try self.predict(motions: Array(motions))
+                    if self.dozing.isDozing {
+                        self.dozingCount += 1
+                    } else {
+                        self.dozingCount = 0
+                    }
+                    if self.dozingCount >= 3 {
+                        _ = try await self.setAlarm()
+                    }
+                } catch {
+                    print(error)
                 }
-                if self.dozingCount >= 3 {
-                    _ = try await self.setAlarm()
-                }
-            } catch {
-                print(error)
             }
             self.motions.removeAll()
         }
