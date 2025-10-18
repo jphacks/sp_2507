@@ -12,6 +12,18 @@
           }
         }
       }
+    },
+    "NSMotionUsageDescription" : {
+      "comment" : "Privacy - Motion Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use motion data to detect dozing."
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

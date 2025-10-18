@@ -8,8 +8,17 @@
 import SwiftUI
 
 struct DetectingScreen: View {
+    @State private var model = DetectingModel()
+
     var body: some View {
-        LottieView(name: "Nemulert")
+        VStack {
+            LottieView(name: "Nemulert")
+
+            Text(model.dozing.rawValue)
+        }
+        .task {
+            await model.onAppear()
+        }
     }
 }
 
