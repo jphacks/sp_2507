@@ -94,16 +94,16 @@ final class DetectingModel {
 
     private func setAlarm() async throws -> Alarm {
         let stopButton = AlarmButton(
-            text: "Back to work",
+            text: "Back to Work",
             textColor: .white,
-            systemImageName: "stop.circle"
+            systemImageName: "stop"
         )
         let alert = AlarmPresentation.Alert(
-            title: "Wake up!!",
+            title: "Wake Up!",
             stopButton: stopButton
         )
         let countDown = AlarmPresentation.Countdown(
-            title: "Wake up!!"
+            title: "Counting Down..."
         )
         let presentation = AlarmPresentation(
             alert: alert,

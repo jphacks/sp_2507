@@ -28,19 +28,16 @@ struct AlarmLiveActivity: Widget {
                             .font(.largeTitle)
                             .monospacedDigit()
 
-                    case .paused:
-                        EmptyView()
-
                     case .alert:
                         Text("Wake Up!")
                             .font(.largeTitle)
 
-                    @unknown default:
+                    default:
                         EmptyView()
                     }
 
                     Button(intent: AlarmActionIntent(id: alarmID)) {
-                        Image(systemName: "xmark")
+                        Image(systemName: "stop")
                     }
                     .buttonStyle(.glassProminent)
                     .buttonBorderShape(.circle)
@@ -63,14 +60,11 @@ struct AlarmLiveActivity: Widget {
                             .monospacedDigit()
                             .foregroundStyle(.orange)
 
-                    case .paused:
-                        EmptyView()
-
                     case .alert:
                         Text("Wake Up!")
                             .font(.largeTitle)
 
-                    @unknown default:
+                    default:
                         EmptyView()
                     }
                 }
@@ -78,7 +72,7 @@ struct AlarmLiveActivity: Widget {
                     let alarmID = context.state.alarmID
 
                     Button(intent: AlarmActionIntent(id: alarmID)) {
-                        Image(systemName: "xmark")
+                        Image(systemName: "stop")
                     }
                     .buttonStyle(.glassProminent)
                     .buttonBorderShape(.circle)
@@ -95,14 +89,11 @@ struct AlarmLiveActivity: Widget {
                         .monospacedDigit()
                         .foregroundStyle(.orange)
 
-                case .paused:
-                    EmptyView()
-
                 case .alert:
                     Text("Wake Up!")
                         .font(.largeTitle)
 
-                @unknown default:
+                default:
                     EmptyView()
                 }
             } minimal: {
