@@ -11,7 +11,8 @@ import SwiftUI
 struct NemulertApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DetectingScreen()
+                .preferredColorScheme(.dark)
         }
     }
 }
