@@ -9,12 +9,8 @@ import Foundation
 
 enum Dozing: String {
     case idle
-    case dozingFront
-    case dozingBack
-    case dozingLeft
-    case dozingRight
-
-    var label: String {
-        rawValue.capitalized
-    }
+    case dozingFront = "dozing_front"
+    case dozingBack = "dozing_back"
+    case dozingLeft = "dozing_left"
+    case dozingRight = "dozing_right"
 }

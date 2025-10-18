@@ -5,6 +5,7 @@
 //  Created by 藤間里緒香 on 2025/10/18.
 //
 
+import AsyncAlgorithms
 import CoreML
 import CoreMotion
 import Foundation
@@ -15,6 +16,8 @@ import Observation
 final class DetectingModel {
     var motion: CMDeviceMotion?
     var startingPose: CMAttitude?
+    var motions: [CMDeviceMotion] = []
+    var dozing: Dozing = .idle
 
     func onAppear() async {
         let queue = OperationQueue()
@@ -23,13 +26,25 @@ final class DetectingModel {
         queue.qualityOfService = .background
         do {
             for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-                if let startingPose {
-                    motion.attitude.multiply(byInverseOf: startingPose)
-                } else {
-                    startingPose = motion.attitude
+                Task { @MainActor in
+                    if let startingPose = self.startingPose {
+                        motion.attitude.multiply(byInverseOf: startingPose)
+                    } else {
+                        self.startingPose = motion.attitude
+                    }
+                    self.motion = motion
+//                    print(motion.attitude.debugDescription)
+                    self.motions.append(motion)
+                    if self.motions.count >= 100 {
+                        do {
+                            let motions = self.motions.prefix(100)
+                            self.dozing = try self.predict(motions: Array(motions))
+                        } catch {
+                            print(error)
+                        }
+                        self.motions.removeAll()
+                    }
                 }
-                self.motion = motion
-                print(motion.attitude.debugDescription)
             }
         } catch {
             print(error)
@@ -52,4 +67,7 @@ final class DetectingModel {
         print("\(output.label) detected.")
         return Dozing(rawValue: output.label) ?? .idle
     }
+}
+
+extension CMDeviceMotion: @retroactive @unchecked Sendable {
 }
