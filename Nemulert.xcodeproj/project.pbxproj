@@ -80,18 +80,11 @@
 			);
 			target = F1EE53AE2EA3868C00C9FDED /* NemulertWidgetExtension */;
 		};
-		F1EE53D02EA386DF00C9FDED /* Exceptions for "NemulertWidget" folder in "Nemulert" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				AlarmLiveActivity.swift,
-			);
-			target = F1421CBD2EA14838004A5AA6 /* Nemulert */;
-		};
 		F1EE53D22EA3873400C9FDED /* Exceptions for "Nemulert" folder in "NemulertWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Entity/DozingData.swift,
-				Helper/AlarmActionIntent.swift,
+				Helper/CancelAlarmIntent.swift,
 			);
 			target = F1EE53AE2EA3868C00C9FDED /* NemulertWidgetExtension */;
 		};
@@ -120,7 +113,6 @@
 		F1EE53B52EA3868C00C9FDED /* NemulertWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				F1EE53D02EA386DF00C9FDED /* Exceptions for "NemulertWidget" folder in "Nemulert" target */,
 				F1EE53C92EA3868E00C9FDED /* Exceptions for "NemulertWidget" folder in "NemulertWidgetExtension" target */,
 			);
 			path = NemulertWidget;

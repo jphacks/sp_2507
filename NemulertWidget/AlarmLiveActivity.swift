@@ -12,65 +12,20 @@ import WidgetKit
 import SwiftUI
 
 struct AlarmLiveActivity: Widget {
+    typealias Attributes = AlarmAttributes<DozingData>
+
     var body: some WidgetConfiguration {
         ActivityConfiguration(
-            for: AlarmAttributes<DozingData>.self
+            for: Attributes.self
         ) { context in
-            let alarmID = context.state.alarmID
-
-            VStack(alignment: .leading) {
-                Text(context.attributes.presentation.countdown?.title ?? "")
-
-                HStack {
-                    switch context.state.mode {
-                    case .countdown(let countdown):
-                        Text(countdown.fireDate, style: .timer)
-                            .font(.largeTitle)
-                            .monospacedDigit()
-
-                    case .alert:
-                        Text("Wake Up!")
-                            .font(.largeTitle)
-
-                    default:
-                        EmptyView()
-                    }
-
-                    Button(intent: AlarmActionIntent(id: alarmID)) {
-                        Image(systemName: "stop.fill")
-                    }
-                    .buttonStyle(.glassProminent)
-                    .buttonBorderShape(.circle)
-                    .font(.largeTitle)
-                    .tint(.orange)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
+            lockScreen(context: context)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Text(context.attributes.presentation.countdown?.title ?? "")
+                    dynamicIslandExpandedLeading(context: context)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    switch context.state.mode {
-                    case .countdown(let countdown):
-                        Text(countdown.fireDate, style: .timer)
-                            .font(.largeTitle)
-                            .monospacedDigit()
-                            .foregroundStyle(.orange)
-                            .multilineTextAlignment(.trailing)
-
-                    default:
-                        EmptyView()
-                    }
-                }
-                DynamicIslandExpandedRegion(.bottom) {
-                    let alarmID = context.state.alarmID
-
-                    Button("Back to Work", intent: AlarmActionIntent(id: alarmID))
-                        .buttonStyle(.glassProminent)
-                        .tint(.orange)
+                    dynamicIslandExpandedTrailing(context: context)
                 }
             } compactLeading: {
                 Image(systemName: "alarm.fill")
@@ -81,7 +36,7 @@ struct AlarmLiveActivity: Widget {
                     Text(countdown.fireDate, style: .timer)
                         .monospacedDigit()
                         .foregroundStyle(.orange)
-                        .frame(maxWidth: 48)
+                        .frame(maxWidth: 44)
                         .multilineTextAlignment(.trailing)
 
                 default:
@@ -92,5 +47,61 @@ struct AlarmLiveActivity: Widget {
                     .foregroundStyle(.orange)
             }
         }
+    }
+
+    private func lockScreen(context: ActivityViewContext<Attributes>) -> some View {
+        HStack {
+            switch context.state.mode {
+            case .countdown(let countdown):
+                timerView(fireDate: countdown.fireDate)
+
+            case .alert:
+                Text("Wake Up!")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundStyle(.orange)
+
+            default:
+                EmptyView()
+            }
+
+            Spacer()
+
+            cancelAlarmButton(alarmID: context.state.alarmID.uuidString)
+        }
+        .padding()
+    }
+
+    @ViewBuilder
+    private func dynamicIslandExpandedLeading(context: ActivityViewContext<Attributes>) -> some View {
+        switch context.state.mode {
+        case .countdown(let countdown):
+            timerView(fireDate: countdown.fireDate)
+                .frame(maxHeight: .infinity, alignment: .center)
+
+        default:
+            EmptyView()
+        }
+    }
+
+    private func dynamicIslandExpandedTrailing(context: ActivityViewContext<Attributes>) -> some View {
+        cancelAlarmButton(alarmID: context.state.alarmID.uuidString)
+            .frame(maxHeight: .infinity, alignment: .center)
+    }
+
+    private func timerView(fireDate: Date) -> some View {
+        Text(fireDate, style: .timer)
+            .monospacedDigit()
+            .font(.largeTitle)
+            .foregroundStyle(.orange)
+    }
+
+    private func cancelAlarmButton(alarmID: String) -> some View {
+        Button(intent: CancelAlarmIntent(alarmID: alarmID)) {
+            Image(systemName: "figure.run")
+                .font(.title)
+        }
+        .buttonBorderShape(.circle)
+        .tint(.orange)
     }
 }

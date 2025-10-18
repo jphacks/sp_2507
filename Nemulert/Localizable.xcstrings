@@ -1,13 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
-    "Alarm Action" : {
-
-    },
     "Back to Work" : {
+
+    },
+    "Cancel the Alarm" : {
+
+    },
+    "Cancels the specified alarm." : {
 
     },
     "Counting Down..." : {

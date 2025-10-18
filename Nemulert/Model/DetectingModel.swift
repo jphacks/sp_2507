@@ -16,9 +16,6 @@ import SwiftUI
 
 @Observable
 final class DetectingModel {
-    private let alarmID = UUID()
-    private let queueName = "co.furari.Nemulert.headphone_motion_update"
-
     @ObservationIgnored
     private var motion: CMDeviceMotion?
     @ObservationIgnored
@@ -35,10 +32,14 @@ final class DetectingModel {
             try await AlarmManager.shared.requestAuthorization()
         }
 
-        _ = try? await setAlarm()
+        do {
+            _ = try await setAlarm()
+        } catch {
+            print(error)
+        }
 
 //        let queue = OperationQueue()
-//        queue.name = queueName
+//        queue.name = "co.furari.Nemulert.headphone_motion_update"
 //        queue.maxConcurrentOperationCount = 1
 //        queue.qualityOfService = .background
 //        do {
@@ -95,8 +96,8 @@ final class DetectingModel {
     private func setAlarm() async throws -> Alarm {
         let stopButton = AlarmButton(
             text: "Back to Work",
-            textColor: .orange,
-            systemImageName: "stop.fill"
+            textColor: .white,
+            systemImageName: "figure.run"
         )
         let alert = AlarmPresentation.Alert(
             title: "Wake Up!",
@@ -121,10 +122,17 @@ final class DetectingModel {
             countdownDuration: countdownDuration,
             attributes: attributes
         )
+        try await cancelAllAlarms()
         return try await AlarmManager.shared.schedule(
-            id: alarmID,
+            id: .init(),
             configuration: configuration
         )
+    }
+
+    private func cancelAllAlarms() async throws {
+        for alarm in try AlarmManager.shared.alarms {
+            try AlarmManager.shared.cancel(id: alarm.id)
+        }
     }
 }
 
