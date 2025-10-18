@@ -87,6 +87,14 @@ Delete Ad Hoc
 
 Delete App Store
 
+### ios register_a_new_device
+
+```sh
+[bundle exec] fastlane ios register_a_new_device
+```
+
+Register a new device
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
