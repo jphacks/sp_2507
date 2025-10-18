@@ -35,42 +35,44 @@ final class DetectingModel {
             try await AlarmManager.shared.requestAuthorization()
         }
 
-        let queue = OperationQueue()
-        queue.name = queueName
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .background
-        do {
-            for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-                Task { @MainActor in
-                    if let startingPose = self.startingPose {
-                        motion.attitude.multiply(byInverseOf: startingPose)
-                    } else {
-                        self.startingPose = motion.attitude
-                    }
-                    self.motion = motion
-                    self.motions.append(motion)
-                    if self.motions.count >= 100 {
-                        do {
-                            let motions = self.motions.prefix(100)
-                            self.dozing = try self.predict(motions: Array(motions))
-                            if self.dozing.isDozing {
-                                self.dozingCount += 1
-                            } else {
-                                self.dozingCount = 0
-                            }
-                            if self.dozingCount >= 3 {
-                                _ = try await self.setAlarm()
-                            }
-                        } catch {
-                            print(error)
-                        }
-                        self.motions.removeAll()
-                    }
-                }
-            }
-        } catch {
-            print(error)
-        }
+        _ = try? await setAlarm()
+
+//        let queue = OperationQueue()
+//        queue.name = queueName
+//        queue.maxConcurrentOperationCount = 1
+//        queue.qualityOfService = .background
+//        do {
+//            for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
+//                Task { @MainActor in
+//                    if let startingPose = self.startingPose {
+//                        motion.attitude.multiply(byInverseOf: startingPose)
+//                    } else {
+//                        self.startingPose = motion.attitude
+//                    }
+//                    self.motion = motion
+//                    self.motions.append(motion)
+//                    if self.motions.count >= 100 {
+//                        do {
+//                            let motions = self.motions.prefix(100)
+//                            self.dozing = try self.predict(motions: Array(motions))
+//                            if self.dozing.isDozing {
+//                                self.dozingCount += 1
+//                            } else {
+//                                self.dozingCount = 0
+//                            }
+//                            if self.dozingCount >= 3 {
+//                                _ = try await self.setAlarm()
+//                            }
+//                        } catch {
+//                            print(error)
+//                        }
+//                        self.motions.removeAll()
+//                    }
+//                }
+//            }
+//        } catch {
+//            print(error)
+//        }
     }
 
     private func predict(motions: [CMDeviceMotion]) throws -> Dozing {
@@ -96,14 +98,19 @@ final class DetectingModel {
             textColor: .white,
             systemImageName: "stop.circle"
         )
-        let presentation = AlarmPresentation.Alert(
+        let alert = AlarmPresentation.Alert(
             title: "Wake up!!",
             stopButton: stopButton
         )
+        let countDown = AlarmPresentation.Countdown(
+            title: "Wake up!!"
+        )
+        let presentation = AlarmPresentation(
+            alert: alert,
+            countdown: countDown
+        )
         let attributes = AlarmAttributes(
-            presentation: AlarmPresentation(
-                alert: presentation
-            ),
+            presentation: presentation,
             metadata: DozingData(),
             tintColor: Color.orange
         )
@@ -115,7 +122,10 @@ final class DetectingModel {
             countdownDuration: countdownDuration,
             attributes: attributes
         )
-        return try await AlarmManager.shared.schedule(id: alarmID, configuration: configuration)
+        return try await AlarmManager.shared.schedule(
+            id: alarmID,
+            configuration: configuration
+        )
     }
 }
 

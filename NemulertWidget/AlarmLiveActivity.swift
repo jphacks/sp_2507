@@ -1,0 +1,114 @@
+//
+//  AlarmLiveActivity.swift
+//  Nemulert
+//
+//  Created by Kanta Oikawa on 2025/10/18.
+//
+
+import ActivityKit
+import AlarmKit
+import AppIntents
+import WidgetKit
+import SwiftUI
+
+struct AlarmLiveActivity: Widget {
+    var body: some WidgetConfiguration {
+        ActivityConfiguration(
+            for: AlarmAttributes<DozingData>.self
+        ) { context in
+            let alarmID = context.state.alarmID
+
+            VStack(alignment: .leading) {
+                Text(context.attributes.presentation.countdown?.title ?? "")
+
+                HStack {
+                    switch context.state.mode {
+                    case .countdown(let countdown):
+                        Text(countdown.fireDate, style: .timer)
+                            .font(.largeTitle)
+                            .monospacedDigit()
+
+                    case .paused:
+                        EmptyView()
+
+                    case .alert:
+                        Text("Wake Up!")
+                            .font(.largeTitle)
+
+                    @unknown default:
+                        EmptyView()
+                    }
+
+                    Button(intent: AlarmActionIntent(id: alarmID)) {
+                        Image(systemName: "xmark")
+                    }
+                    .buttonStyle(.glassProminent)
+                    .buttonBorderShape(.circle)
+                    .font(.largeTitle)
+                    .tint(.orange)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+        } dynamicIsland: { context in
+            DynamicIsland {
+                DynamicIslandExpandedRegion(.leading) {
+                    Text(context.attributes.presentation.countdown?.title ?? "")
+                }
+                DynamicIslandExpandedRegion(.trailing) {
+                    switch context.state.mode {
+                    case .countdown(let countdown):
+                        Text(countdown.fireDate, style: .timer)
+                            .font(.largeTitle)
+                            .monospacedDigit()
+                            .foregroundStyle(.orange)
+
+                    case .paused:
+                        EmptyView()
+
+                    case .alert:
+                        Text("Wake Up!")
+                            .font(.largeTitle)
+
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                DynamicIslandExpandedRegion(.center) {
+                    let alarmID = context.state.alarmID
+
+                    Button(intent: AlarmActionIntent(id: alarmID)) {
+                        Image(systemName: "xmark")
+                    }
+                    .buttonStyle(.glassProminent)
+                    .buttonBorderShape(.circle)
+                    .font(.largeTitle)
+                    .tint(.orange)
+                }
+            } compactLeading: {
+                Image(systemName: "alarm.fill")
+                    .foregroundStyle(.orange)
+            } compactTrailing: {
+                switch context.state.mode {
+                case .countdown(let countdown):
+                    Text(countdown.fireDate, style: .timer)
+                        .monospacedDigit()
+                        .foregroundStyle(.orange)
+
+                case .paused:
+                    EmptyView()
+
+                case .alert:
+                    Text("Wake Up!")
+                        .font(.largeTitle)
+
+                @unknown default:
+                    EmptyView()
+                }
+            } minimal: {
+                Image(systemName: "alarm.fill")
+                    .foregroundStyle(.orange)
+            }
+        }
+    }
+}

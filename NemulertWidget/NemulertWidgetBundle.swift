@@ -11,8 +11,6 @@ import SwiftUI
 @main
 struct NemulertWidgetBundle: WidgetBundle {
     var body: some Widget {
-        NemulertWidget()
-        NemulertWidgetControl()
-        NemulertWidgetLiveActivity()
+        AlarmLiveActivity()
     }
 }
