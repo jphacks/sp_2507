@@ -92,7 +92,7 @@ final class DetectingModel {
 
     private func setAlarm() async throws -> Alarm {
         let countdownDuration = Alarm.CountdownDuration(
-            preAlert: 5,
+            preAlert: 60,
             postAlert: 60
         )
         let stopButton = AlarmButton(
