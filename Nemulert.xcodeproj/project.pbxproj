@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F12CC8512EA3273100589185 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8502EA3273100589185 /* Dependencies */; };
+		F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8522EA3273100589185 /* DependenciesMacros */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		F1421CCC2EA14839004A5AA6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +70,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */,
+				F12CC8512EA3273100589185 /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +132,8 @@
 			);
 			name = Nemulert;
 			packageProductDependencies = (
+				F12CC8502EA3273100589185 /* Dependencies */,
+				F12CC8522EA3273100589185 /* DependenciesMacros */,
 			);
 			productName = Nemulert;
 			productReference = F1421CBE2EA14838004A5AA6 /* Nemulert.app */;
@@ -209,6 +218,9 @@
 			);
 			mainGroup = F1421CB52EA14838004A5AA6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F1421CBF2EA14838004A5AA6 /* Products */;
 			projectDirPath = "";
@@ -647,6 +659,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F12CC8502EA3273100589185 /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+		F12CC8522EA3273100589185 /* DependenciesMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F1421CB62EA14838004A5AA6 /* Project object */;
 }
