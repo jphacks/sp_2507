@@ -96,4 +96,14 @@ platform :ios do
       api_key: get_app_store_connect_api_key,
     )
   end
+
+  desc "Register a new device"
+  lane :register_a_new_device do
+    register_device(
+      name: ENV["DEVICE_NAME"],
+      udid: ENV["DEVICE_UDID"],
+      platform: ENV["DEVICE_PLATFORM"],
+      api_key: get_app_store_connect_api_key,
+    )
+  end
 end
