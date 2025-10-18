@@ -59,7 +59,7 @@ final class DetectingModel {
                                 self.dozingCount = 0
                             }
                             if self.dozingCount >= 3 {
-                                await self.setAlarm()
+                                _ = try await self.setAlarm()
                             }
                         } catch {
                             print(error)
@@ -90,18 +90,18 @@ final class DetectingModel {
         return Dozing(rawValue: output.label) ?? .idle
     }
 
-    private func setAlarm() async {
+    private func setAlarm() async throws -> Alarm {
         let countdownDuration = Alarm.CountdownDuration(
-            preAlert: 60,
+            preAlert: 5,
             postAlert: 60
         )
         let stopButton = AlarmButton(
             text: "Back to work",
-            textColor: .black,
+            textColor: .white,
             systemImageName: "stop.circle"
         )
         let presentation = AlarmPresentation.Alert(
-            title: "",
+            title: "Wake up!!",
             stopButton: stopButton
         )
         let attributes = AlarmAttributes<DozingData>(
@@ -114,7 +114,7 @@ final class DetectingModel {
             countdownDuration: countdownDuration,
             attributes: attributes
         )
-        _ = try? await AlarmManager.shared.schedule(id: alarmID, configuration: configuration)
+        return try await AlarmManager.shared.schedule(id: alarmID, configuration: configuration)
     }
 }
 
