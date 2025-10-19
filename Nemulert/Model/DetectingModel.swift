@@ -35,7 +35,7 @@ final class DetectingModel {
                     self.motion = motion
 //                    print(motion.attitude.debugDescription)
                     self.motions.append(motion)
-                    if self.motions.count >= 250 {
+                    if self.motions.count >= 150 {
                         do {
                             let motions = self.motions.prefix(100)
                             self.dozing = try self.predict(motions: Array(motions))
