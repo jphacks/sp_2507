@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Are you dozing off?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "うとうとしていませんか？"
+          }
+        }
+      }
+    },
     "Back to Work" : {
       "localizations" : {
         "ja" : {
@@ -37,6 +47,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カウントダウンしています…"
+          }
+        }
+      }
+    },
+    "Tap to continue working!" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タップして作業を続ける！"
           }
         }
       }
