@@ -70,6 +70,13 @@ final class DetectingModel {
         }
     }
 
+    func onSceneChanged() {
+        Task {
+            await restartMotionUpdateTask()
+            try await cancelAllAlarms()
+        }
+    }
+
     private func restartMotionUpdateTask() async {
         self.motionUpdateTask?.cancel()
         await Task { @MainActor in
