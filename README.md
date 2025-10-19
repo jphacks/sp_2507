@@ -6,7 +6,7 @@
 
 ### デモ動画
 
-<iframe src="https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview" width="640" height="480" allow="autoplay"></iframe>
+<iframe src="https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview" width="640" height="480"></iframe>
 
 ### 背景 (製品開発のきっかけ、課題等)
 
