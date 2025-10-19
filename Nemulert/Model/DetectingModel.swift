@@ -119,7 +119,7 @@ final class DetectingModel {
                     if self.dozing.isDozing {
                         self.dozingCount += 1
                     }
-                    if self.dozingCount >= 3 {
+                    if self.dozingCount >= 2 {
                         _ = try await self.setAlarm()
                         try await self.pushNotification()
                         self.dozingCount = 0
