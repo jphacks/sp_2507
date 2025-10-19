@@ -6,7 +6,6 @@
 //
 
 import AlarmKit
-import AsyncAlgorithms
 import CoreML
 import CoreMotion
 import Foundation
