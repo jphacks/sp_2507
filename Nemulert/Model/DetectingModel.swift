@@ -100,11 +100,12 @@ final class DetectingModel {
                     self.dozing = try self.predict(motions: Array(motions))
                     if self.dozing.isDozing {
                         self.dozingCount += 1
-                    } else {
+                    }/* else {
                         self.dozingCount = 0
-                    }
+                    }*/
                     if self.dozingCount >= 3 {
                         _ = try await self.setAlarm()
+                        self.dozingCount = 0
                     }
                 } catch {
                     print(error)
