@@ -71,7 +71,7 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
   - UI や操作/アクションを必要最低限にした
     - 1 画面で完結する UI
     - ユーザーの学習性や利便性の向上
-      <video src="https://github.com/user-attachments/assets/c5a2d630-c68a-4d86-b2a6-054727d80426" controls="true"></video>
+    - <video src="https://github.com/user-attachments/assets/c5a2d630-c68a-4d86-b2a6-054727d80426" controls="true"></video>
   - アイコン
     - アラートでびっくりして目覚めたことを「!」で表現した
     - 「!」の下の部分は AirPods を表現した
