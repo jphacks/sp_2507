@@ -6,7 +6,7 @@
 
 ### デモ動画
 
-https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview
+[![thumbnail]()](https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview)
 
 ### 背景 (製品開発のきっかけ、課題等)
 
@@ -31,7 +31,8 @@ https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview
 #### 2. シンプルな操作性
 
 AppIntents や ActivityKit、WidgetKit など、iOS の機能をフル活用して、ユーザー体験の親和性を高めました。さらに、WWDC25 で発表された、AlarmKit を活用し、システムと同じインターフェースを持つアラームを実装しました。
-![action](images/launch.png)
+
+![launch](https://github.com/user-attachments/assets/03cf067e-e1ce-4b8a-915f-48cc3182a0a6)
 
 #### 3. 「作業」か「睡眠」かを自分で決められる
 
@@ -40,7 +41,8 @@ AppIntents や ActivityKit、WidgetKit など、iOS の機能をフル活用し�
 #### 4. 深い眠りを防ぐ「段階的アラーム」機能
 
 うとうとを検知しても、すぐに大音量のアラームは鳴りません。まず 1 分間のタイマーが作動しユーザーに通知することで、「うとうとしそうだ」という状態を知らせます。タイマーが終了した時点でアラームが鳴るため、確実に「うとうと」の瞬間だけを捉えて起こします。
-<video src="images/notification.mov" controls="true"></video>
+
+<video src="https://github.com/user-attachments/assets/1906ebfa-4e38-4833-b0b3-63dea68bf4a5" controls="true"></video>
 
 #### 5. 夜に勉強や作業をするという特定のシーンに最適化
 
@@ -69,7 +71,7 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
   - UI や操作/アクションを必要最低限にした
     - 1 画面で完結する UI
     - ユーザーの学習性や利便性の向上
-      <video src="images/UI.mov" controls="true"></video>
+      <video src="https://github.com/user-attachments/assets/c5a2d630-c68a-4d86-b2a6-054727d80426" controls="true"></video>
   - アイコン
     - アラートでびっくりして目覚めたことを「!」で表現した
     - 「!」の下の部分は AirPods を表現した
