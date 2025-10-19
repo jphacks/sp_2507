@@ -12,5 +12,6 @@ import SwiftUI
 struct NemulertWidgetBundle: WidgetBundle {
     var body: some Widget {
         AlarmLiveActivity()
+        StartNemulertControl()
     }
 }

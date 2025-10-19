@@ -82,6 +82,7 @@
 			membershipExceptions = (
 				Entity/DozingData.swift,
 				Helper/CancelAlarmIntent.swift,
+				Helper/OpenAppIntent.swift,
 			);
 			target = F1EE53AE2EA3868C00C9FDED /* NemulertWidgetExtension */;
 		};

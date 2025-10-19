@@ -51,6 +51,16 @@
         }
       }
     },
+    "Open App" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリを起動"
+          }
+        }
+      }
+    },
     "Tap to continue working!" : {
       "localizations" : {
         "ja" : {

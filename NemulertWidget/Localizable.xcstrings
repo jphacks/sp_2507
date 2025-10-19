@@ -21,6 +21,36 @@
         }
       }
     },
+    "Open App" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリを起動"
+          }
+        }
+      }
+    },
+    "Start monitoring on Nemulert." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nemulertでモニタ開始"
+          }
+        }
+      }
+    },
+    "Start Nemulert" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nemulertを起動"
+          }
+        }
+      }
+    },
     "Wake Up!" : {
       "localizations" : {
         "ja" : {
