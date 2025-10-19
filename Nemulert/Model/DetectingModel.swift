@@ -29,6 +29,8 @@ final class DetectingModel {
     private var dozingCount: Int = 0
     @ObservationIgnored
     nonisolated(unsafe) private var motionUpdateTask: Task<Void, Never>?
+    @ObservationIgnored
+    private let windowSize: Int = 150
 
     func onAppear() async {
         await withTaskGroup { group in
@@ -91,10 +93,10 @@ final class DetectingModel {
         }
         self.motion = motion
         self.motions.append(motion)
-        if self.motions.count >= 100 {
+        if self.motions.count >= windowSize {
             if try AlarmManager.shared.alarms.isEmpty {
                 do {
-                    let motions = self.motions.prefix(100)
+                    let motions = self.motions.prefix(windowSize)
                     self.dozing = try self.predict(motions: Array(motions))
                     if self.dozing.isDozing {
                         self.dozingCount += 1
