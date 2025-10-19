@@ -45,7 +45,7 @@ final class DetectingModel {
             }
 
             group.addTask {
-                for await isConnected in HeadphoneMotionManager().isConnectedStream {
+                for await isConnected in HeadphoneMotionManager().connectionUpdates() {
                     print("Headphone connection status changed: \(isConnected ? "Connected" : "Disconnected")")
                     Task { @MainActor in
                         self.isConnected = isConnected
