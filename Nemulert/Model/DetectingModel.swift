@@ -11,6 +11,7 @@ import CoreML
 import CoreMotion
 import Foundation
 import HeadphoneMotion
+import NotificationCenter
 import Observation
 import SwiftUI
 
@@ -41,6 +42,14 @@ final class DetectingModel {
                     print(error)
                 }
 
+                do {
+                    _ = try await UNUserNotificationCenter.current().requestAuthorization(
+                        options: [.alert, .badge, .sound]
+                    )
+                } catch {
+                    print(error)
+                }
+
                 await self.restartMotionUpdateTask()
             }
 
@@ -56,6 +65,8 @@ final class DetectingModel {
                     }
                 }
             }
+
+            await group.waitForAll()
         }
     }
 
@@ -105,6 +116,7 @@ final class DetectingModel {
                     }
                     if self.dozingCount >= 3 {
                         _ = try await self.setAlarm()
+                        try await self.pushNotification()
                     }
                 } catch {
                     print(error)
@@ -171,6 +183,26 @@ final class DetectingModel {
         for alarm in try AlarmManager.shared.alarms {
             try AlarmManager.shared.cancel(id: alarm.id)
         }
+    }
+
+    private func pushNotification() async throws {
+        let identifier = UUID().uuidString
+        let content = UNMutableNotificationContent()
+        content.title = String(localized: "Are you dozing off?")
+        content.body = String(localized: "Tap to continue working!")
+        content.categoryIdentifier = "dozing"
+        content.sound = .default
+        content.interruptionLevel = .timeSensitive
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: 1,
+            repeats: false
+        )
+        let request = UNNotificationRequest(
+            identifier: identifier,
+            content: content,
+            trigger: trigger
+        )
+        try await UNUserNotificationCenter.current().add(request)
     }
 }
 
