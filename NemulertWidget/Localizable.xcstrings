@@ -1,16 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Back to Work" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "作業に戻る"
-          }
-        }
-      }
-    },
     "Cancel the Alarm" : {
       "localizations" : {
         "ja" : {
@@ -27,16 +17,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "特定のアラームをキャンセルします。"
-          }
-        }
-      }
-    },
-    "Counting Down..." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カウントダウンしています…"
           }
         }
       }
