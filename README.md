@@ -110,3 +110,14 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
 
 - AirPods
 - iPhone
+
+## 発表資料
+
+![発表資料](https://github.com/user-attachments/assets/fb3acf34-4d5c-4e4b-8f74-70237ad37e0a)
+
+![発表資料](https://github.com/user-attachments/assets/1974ef44-5f7c-4e9c-b50e-88bbc80081e9)
+
+![発表資料](https://github.com/user-attachments/assets/27798470-12ca-4411-a0cd-98cd586d6fc3)
+
+![発表資料](https://github.com/user-attachments/assets/4dda2079-7ddd-478f-9ab2-8f03430014cd)
+
