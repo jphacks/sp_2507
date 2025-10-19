@@ -54,7 +54,7 @@ final class DetectingModel {
             }
 
             group.addTask {
-                for await isConnected in HeadphoneMotionManager().isConnectedStream {
+                for await isConnected in HeadphoneMotionManager().connectionUpdates() {
                     print("Headphone connection status changed: \(isConnected ? "Connected" : "Disconnected")")
                     Task { @MainActor in
                         self.isConnected = isConnected
@@ -67,6 +67,13 @@ final class DetectingModel {
             }
 
             await group.waitForAll()
+        }
+    }
+
+    func onSceneChanged() {
+        Task {
+            await restartMotionUpdateTask()
+            try await cancelAllAlarms()
         }
     }
 
@@ -111,12 +118,11 @@ final class DetectingModel {
                     self.dozing = try self.predict(motions: Array(motions))
                     if self.dozing.isDozing {
                         self.dozingCount += 1
-                    } else {
-                        self.dozingCount = 0
                     }
                     if self.dozingCount >= 3 {
                         _ = try await self.setAlarm()
                         try await self.pushNotification()
+                        self.dozingCount = 0
                     }
                 } catch {
                     print(error)

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DetectingScreen: View {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var model = DetectingModel()
 
     var body: some View {
@@ -15,6 +16,16 @@ struct DetectingScreen: View {
             .padding()
             .task {
                 await model.onAppear()
+            }
+            .onChange(of: scenePhase) { oldPhase, newPhase in
+                switch (oldPhase, newPhase) {
+                case (.inactive, .active), (.background, .active):
+                    model.onSceneChanged()
+
+                default:
+                    break
+                }
+
             }
     }
 }
