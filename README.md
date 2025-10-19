@@ -92,8 +92,8 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
 #### フレームワーク・ライブラリ・モジュール
 
 - ActivityKit
-- App Intents
 - AlarmKit
+- App Intents
 - Core ML
 - Core Motion
 - Lottie for iOS
