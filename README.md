@@ -89,15 +89,6 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
 
 ## 開発技術
 
-- Swift
-- SwiftUI
-
-### 活用した技術
-
-#### API・データ
-
-- csv
-
 #### フレームワーク・ライブラリ・モジュール
 
 - ActivityKit
@@ -106,6 +97,9 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
 - Core ML
 - Core Motion
 - Lottie for iOS
+- Swift
+- Swift Package Manager
+- SwiftUI
 - WidgetKit
 
 #### デバイス
