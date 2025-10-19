@@ -6,7 +6,7 @@
 
 ### デモ動画
 
-[![thumbnail]()](https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview)
+[![thumbnail](https://github.com/user-attachments/assets/7f711d98-df43-4089-88fc-7636e6d86f01)](https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview)
 
 ### 背景 (製品開発のきっかけ、課題等)
 
