@@ -72,7 +72,8 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
     - ユーザーの学習性や利便性の向上
     - <video src="https://github.com/user-attachments/assets/c5a2d630-c68a-4d86-b2a6-054727d80426" controls="true"></video>
   - アイコン
-    - icon composer を使用して、liquid glass を考慮した
+    - <img width="320" height="320" alt="Nemulert-iOS-Default-1024x1024@1x" src="https://github.com/user-attachments/assets/8a9127d5-d2d7-42cb-aab6-5981867e81d6" />
+    - Icon Composer を使用して Liquid Glass に対応
     - アラートでびっくりして目覚めたことを「!」で表現した
     - 「!」の下の部分は AirPods を表現した
 - UX
