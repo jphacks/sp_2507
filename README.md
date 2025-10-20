@@ -29,7 +29,7 @@
 
 #### 2. シンプルな操作性
 
-AppIntents や ActivityKit、WidgetKit など、iOS の機能をフル活用して、ユーザー体験の親和性を高めました。さらに、WWDC25 で発表された、AlarmKit を活用し、システムと同じインターフェースを持つアラームを実装しました。
+App Intents や ActivityKit、WidgetKit など、iOS の機能をフル活用して、ユーザー体験の親和性を高めました。さらに、WWDC25 で発表された、AlarmKit を活用し、システムと同じインターフェースを持つアラームを実装しました。
 
 ![launch](https://github.com/user-attachments/assets/03cf067e-e1ce-4b8a-915f-48cc3182a0a6)
 
