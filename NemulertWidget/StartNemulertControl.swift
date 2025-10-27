@@ -12,7 +12,7 @@ import WidgetKit
 struct StartNemulertControl: ControlWidget {
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(
-            kind: "co.furari.Nemulert.NemulertWidget.StartNemulertControl",
+            kind: "com.kantacky.Nemulert.NemulertWidget.StartNemulertControl",
             provider: Provider()
         ) { value in
             ControlWidgetButton(

@@ -1,4 +1,4 @@
-app_identifier("co.furari.Nemulert")
+app_identifier("com.kantacky.Nemulert")
 apple_id("iam@kantacky.com")
 apple_dev_portal_id("iam@kantacky.com")
 itunes_connect_id("iam@kantacky.com")

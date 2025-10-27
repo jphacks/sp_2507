@@ -89,7 +89,7 @@ final class DetectingModel {
     private func getMotionUpdateTask() -> Task<Void, Never>? {
         Task.detached(priority: .background) { [weak self] in
             let queue = OperationQueue()
-            queue.name = "co.furari.Nemulert.headphone_motion_update"
+            queue.name = "com.kantacky.Nemulert.headphone_motion_update"
             queue.maxConcurrentOperationCount = 1
             queue.qualityOfService = .background
             do {
