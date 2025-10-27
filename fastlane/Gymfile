@@ -1,0 +1,2 @@
+scheme("Nemulert")
+output_directory("./build")

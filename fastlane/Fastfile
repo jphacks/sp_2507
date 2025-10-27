@@ -1,21 +1,8 @@
-# This file contains the fastlane.tools configuration
-# You can find the documentation at https://docs.fastlane.tools
-#
-# For a list of all available actions, check out
-#
-#     https://docs.fastlane.tools/actions
-#
-# For a list of all available plugins, check out
-#
-#     https://docs.fastlane.tools/plugins/available-plugins
-#
-
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 default_platform(:ios)
 
 platform :ios do
+  ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "30"
+
   def get_app_store_connect_api_key
     app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
@@ -105,5 +92,61 @@ platform :ios do
       platform: ENV["DEVICE_PLATFORM"],
       api_key: get_app_store_connect_api_key,
     )
+  end
+
+  desc "Reset build number"
+  lane :reset_build_number do
+    increment_build_number({
+      build_number: 1
+    })
+  end
+
+  desc "Build for Development"
+  lane :build_for_development do
+    match_fetch_development
+    gym(
+      export_method: "development",
+      export_options: {
+        clean: true,
+        provisioningProfiles: {
+          "com.kantacky.Nemulert" => "match Development com.kantacky.Nemulert",
+          "com.kantacky.Nemulert.NemulertWidget" => "match Development com.kantacky.Nemulert.NemulertWidget"
+        }
+      }
+    )
+  end
+
+  desc "Build for App Store"
+  lane :build_for_release do
+    match_fetch_appstore
+    gym(
+      export_method: "app-store",
+      export_options: {
+        clean: true,
+        provisioningProfiles: {
+          "com.kantacky.Nemulert" => "match AppStore com.kantacky.Nemulert",
+          "com.kantacky.Nemulert.NemulertWidget" => "match AppStore com.kantacky.Nemulert.NemulertWidget"
+        }
+      }
+    )
+  end
+
+  desc "Distribute to TestFlight"
+  lane :distribute_to_testflight do
+    pilot(
+      api_key: get_app_store_connect_api_key,
+      ipa: "./build/Nemulert.ipa",
+      skip_submission: true,
+    )
+  end
+
+  desc "Build and distribute to TestFlight"
+  lane :build_and_distribute_to_testflight do
+    increment_build_number({
+      build_number: latest_testflight_build_number + 1
+    })
+    build_for_release
+    distribute_to_testflight
+    reset_build_number
   end
 end
