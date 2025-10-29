@@ -36,6 +36,8 @@ final class DetectingModel {
     @ObservationIgnored
     @Dependency(AlarmService.self) private var alarmService
     @ObservationIgnored
+    @Dependency(DozingDetectionService.self) private var dozingDetectionService
+    @ObservationIgnored
     @Dependency(NotificationService.self) private var notificationService
 
     func onAppear() async {
@@ -118,7 +120,7 @@ final class DetectingModel {
             if try AlarmManager.shared.alarms.isEmpty {
                 do {
                     let motions = self.motions.prefix(windowSize)
-                    self.dozing = try self.predict(motions: Array(motions))
+                    self.dozing = try await self.dozingDetectionService.predict(motions: Array(motions))
                     if self.dozing.isDozing {
                         self.dozingCount += 1
                     }
@@ -133,23 +135,6 @@ final class DetectingModel {
             }
             self.motions.removeAll()
         }
-    }
-
-    private func predict(motions: [CMDeviceMotion]) throws -> Dozing {
-        let configuration = MLModelConfiguration()
-        let model = try DozingDetection(configuration: configuration)
-        let input = DozingDetectionInput(
-            attitude_pitch: try MLMultiArray(motions.map { $0.attitude.pitch }),
-            attitude_roll: try MLMultiArray(motions.map { $0.attitude.roll }),
-            attitude_yaw: try MLMultiArray(motions.map { $0.attitude.yaw }),
-            rotation_rate_x: try MLMultiArray(motions.map { $0.rotationRate.x }),
-            rotation_rate_y: try MLMultiArray(motions.map { $0.rotationRate.y }),
-            rotation_rate_z: try MLMultiArray(motions.map { $0.rotationRate.z }),
-            stateIn: try MLMultiArray(shape: [400], dataType: .double)
-        )
-        let output = try model.prediction(input: input)
-        print("\(output.label) detected.")
-        return Dozing(rawValue: output.label) ?? .idle
     }
 }
 
