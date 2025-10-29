@@ -41,5 +41,9 @@ extension DozingDetectionService: DependencyKey {
 extension DozingDetectionService: TestDependencyKey {
     static let testValue = DozingDetectionService()
 
-    static let previewValue = DozingDetectionService()
+    static let previewValue = DozingDetectionService(
+        predict: { _ in
+            .idle
+        }
+    )
 }

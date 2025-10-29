@@ -14,7 +14,7 @@ import SwiftUI
 struct AlarmService {
     var requestAuthorization: @Sendable () async throws -> AlarmManager.AuthorizationState
     var getAlarms: @Sendable () throws -> [Alarm]
-    var scheduleAlarm: @Sendable () async throws -> Alarm
+    var scheduleAlarm: @Sendable (_ id: Alarm.ID) async throws -> Void
     var cancelAllAlarms: @Sendable () async throws -> Void
 }
 
@@ -26,7 +26,7 @@ extension AlarmService: DependencyKey {
         getAlarms: {
             try AlarmManager.shared.alarms
         },
-        scheduleAlarm: {
+        scheduleAlarm: { id in
             let stopButton = AlarmButton(
                 text: "Back to Work",
                 textColor: .white,
@@ -56,8 +56,8 @@ extension AlarmService: DependencyKey {
                 attributes: attributes
             )
             try await cancelAllAlarms()
-            return try await AlarmManager.shared.schedule(
-                id: .init(),
+            _ = try await AlarmManager.shared.schedule(
+                id: id,
                 configuration: configuration
             )
         },
@@ -76,5 +76,16 @@ extension AlarmService: DependencyKey {
 extension AlarmService: TestDependencyKey {
     static let testValue = AlarmService()
 
-    static let previewValue = AlarmService()
+    static let previewValue = AlarmService(
+        requestAuthorization: {
+            .notDetermined
+        },
+        getAlarms: {
+            []
+        },
+        scheduleAlarm: { _ in
+        },
+        cancelAllAlarms: {
+        }
+    )
 }

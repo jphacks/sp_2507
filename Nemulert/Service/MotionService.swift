@@ -35,5 +35,10 @@ extension MotionService: DependencyKey {
 extension MotionService: TestDependencyKey {
     static let testValue = MotionService()
 
-    static let previewValue = MotionService()
+    static let previewValue = MotionService(
+        getMotionUpdateTask: { _, _ in
+            Task {
+            }
+        }
+    )
 }

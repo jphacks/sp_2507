@@ -34,6 +34,8 @@ final class DetectingModel {
     private let windowSize: Int = 150
 
     @ObservationIgnored
+    @Dependency(\.uuid) private var uuid
+    @ObservationIgnored
     @Dependency(AlarmService.self) private var alarmService
     @ObservationIgnored
     @Dependency(DozingDetectionService.self) private var dozingDetectionService
@@ -110,7 +112,7 @@ final class DetectingModel {
                     dozingCount += 1
                 }
                 if self.dozingCount >= 2 {
-                    _ = try await alarmService.scheduleAlarm()
+                    _ = try await alarmService.scheduleAlarm(id: uuid())
                     _ = try await notificationService.requestNotification(
                         title: String(localized: "Are you dozing off?"),
                         body: String(localized: "Tap to continue working!"),
