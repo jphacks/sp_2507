@@ -42,20 +42,20 @@ final class DetectingModel {
 
     func onAppear() async {
         await withTaskGroup { group in
-            group.addTask {
+            group.addTask { [weak self] in
                 do {
-                    _ = try await AlarmManager.shared.requestAuthorization()
+                    _ = try await self?.alarmService.requestAuthorization()
                 } catch {
                     print(error)
                 }
 
                 do {
-                    _ = try await self.notificationService.requestAuthorization()
+                    _ = try await self?.notificationService.requestAuthorization()
                 } catch {
                     print(error)
                 }
 
-                await self.restartMotionUpdateTask()
+                await self?.restartMotionUpdateTask()
             }
 
             group.addTask {
