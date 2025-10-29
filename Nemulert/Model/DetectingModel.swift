@@ -34,6 +34,8 @@ final class DetectingModel {
     private let windowSize: Int = 150
 
     @ObservationIgnored
+    @Dependency(AlarmService.self) private var alarmService
+    @ObservationIgnored
     @Dependency(NotificationService.self) private var notificationService
 
     func onAppear() async {
@@ -74,7 +76,7 @@ final class DetectingModel {
     func onSceneChanged() {
         Task {
             await restartMotionUpdateTask()
-            try await cancelAllAlarms()
+            try await alarmService.cancelAllAlarms()
         }
     }
 
@@ -121,7 +123,7 @@ final class DetectingModel {
                         self.dozingCount += 1
                     }
                     if self.dozingCount >= 2 {
-                        _ = try await self.setAlarm()
+                        _ = try await self.alarmService.requestAlarm()
                         _ = try await self.notificationService.requestNotification()
                         self.dozingCount = 0
                     }
@@ -148,48 +150,6 @@ final class DetectingModel {
         let output = try model.prediction(input: input)
         print("\(output.label) detected.")
         return Dozing(rawValue: output.label) ?? .idle
-    }
-
-    private func setAlarm() async throws -> Alarm {
-        let stopButton = AlarmButton(
-            text: "Back to Work",
-            textColor: .white,
-            systemImageName: "figure.run"
-        )
-        let alert = AlarmPresentation.Alert(
-            title: "Wake Up!",
-            stopButton: stopButton
-        )
-        let countDown = AlarmPresentation.Countdown(
-            title: "Counting Down..."
-        )
-        let presentation = AlarmPresentation(
-            alert: alert,
-            countdown: countDown
-        )
-        let attributes = AlarmAttributes<DozingData>(
-            presentation: presentation,
-            tintColor: Color.orange
-        )
-        let countdownDuration = Alarm.CountdownDuration(
-            preAlert: 60,
-            postAlert: 60
-        )
-        let configuration = AlarmManager.AlarmConfiguration(
-            countdownDuration: countdownDuration,
-            attributes: attributes
-        )
-        try await cancelAllAlarms()
-        return try await AlarmManager.shared.schedule(
-            id: .init(),
-            configuration: configuration
-        )
-    }
-
-    private func cancelAllAlarms() async throws {
-        for alarm in try AlarmManager.shared.alarms {
-            try AlarmManager.shared.cancel(id: alarm.id)
-        }
     }
 }
 
