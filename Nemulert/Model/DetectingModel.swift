@@ -58,15 +58,15 @@ final class DetectingModel {
                 await self?.restartMotionUpdateTask()
             }
 
-            group.addTask {
+            group.addTask { [weak self] in
                 for await isConnected in HeadphoneMotionManager().connectionUpdates() {
                     print("Headphone connection status changed: \(isConnected ? "Connected" : "Disconnected")")
-                    Task { @MainActor in
-                        self.isConnected = isConnected
+                    Task { @MainActor [weak self] in
+                        self?.isConnected = isConnected
                     }
 
                     if isConnected {
-                        await self.restartMotionUpdateTask()
+                        await self?.restartMotionUpdateTask()
                     }
                 }
             }
