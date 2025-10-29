@@ -17,6 +17,7 @@ import SwiftUI
 
 @Observable
 final class DetectingModel {
+    @ObservationIgnored
     private var isConnected: Bool = false
     @ObservationIgnored
     private var motion: CMDeviceMotion?
