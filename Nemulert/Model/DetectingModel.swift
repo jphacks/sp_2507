@@ -8,6 +8,7 @@
 import AlarmKit
 import CoreML
 import CoreMotion
+import Dependencies
 import Foundation
 import HeadphoneMotion
 import NotificationCenter
@@ -32,6 +33,9 @@ final class DetectingModel {
     @ObservationIgnored
     private let windowSize: Int = 150
 
+    @ObservationIgnored
+    @Dependency(NotificationService.self) private var notificationService
+
     func onAppear() async {
         await withTaskGroup { group in
             group.addTask {
@@ -42,9 +46,7 @@ final class DetectingModel {
                 }
 
                 do {
-                    _ = try await UNUserNotificationCenter.current().requestAuthorization(
-                        options: [.alert, .badge, .sound]
-                    )
+                    _ = try await self.notificationService.requestAuthorization()
                 } catch {
                     print(error)
                 }
@@ -120,7 +122,7 @@ final class DetectingModel {
                     }
                     if self.dozingCount >= 2 {
                         _ = try await self.setAlarm()
-                        try await self.pushNotification()
+                        _ = try await self.notificationService.requestNotification()
                         self.dozingCount = 0
                     }
                 } catch {
@@ -188,26 +190,6 @@ final class DetectingModel {
         for alarm in try AlarmManager.shared.alarms {
             try AlarmManager.shared.cancel(id: alarm.id)
         }
-    }
-
-    private func pushNotification() async throws {
-        let identifier = UUID().uuidString
-        let content = UNMutableNotificationContent()
-        content.title = String(localized: "Are you dozing off?")
-        content.body = String(localized: "Tap to continue working!")
-        content.categoryIdentifier = "dozing"
-        content.sound = .default
-        content.interruptionLevel = .timeSensitive
-        let trigger = UNTimeIntervalNotificationTrigger(
-            timeInterval: 1,
-            repeats: false
-        )
-        let request = UNNotificationRequest(
-            identifier: identifier,
-            content: content,
-            trigger: trigger
-        )
-        try await UNUserNotificationCenter.current().add(request)
     }
 }
 
