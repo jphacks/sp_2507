@@ -126,7 +126,11 @@ final class DetectingModel {
                     }
                     if self.dozingCount >= 2 {
                         _ = try await self.alarmService.scheduleAlarm()
-                        _ = try await self.notificationService.requestNotification()
+                        _ = try await self.notificationService.requestNotification(
+                            title: String(localized: "Are you dozing off?"),
+                            body: String(localized: "Tap to continue working!"),
+                            categoryIdentifier: "dozing"
+                        )
                         self.dozingCount = 0
                     }
                 } catch {

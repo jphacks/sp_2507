@@ -12,7 +12,7 @@ import UserNotifications
 @DependencyClient
 struct NotificationService {
     var requestAuthorization: @Sendable () async throws -> Bool
-    var requestNotification: @Sendable () async throws -> Void
+    var requestNotification: @Sendable (_ title: String, _ body: String, _ categoryIdentifier: String) async throws -> Void
 }
 
 extension NotificationService: DependencyKey {
@@ -22,12 +22,12 @@ extension NotificationService: DependencyKey {
                 options: [.alert, .badge, .sound]
             )
         },
-        requestNotification: {
+        requestNotification: { title, body, categoryIdentifier in
             let identifier = UUID().uuidString
             let content = UNMutableNotificationContent()
-            content.title = String(localized: "Are you dozing off?")
-            content.body = String(localized: "Tap to continue working!")
-            content.categoryIdentifier = "dozing"
+            content.title = title
+            content.body = body
+            content.categoryIdentifier = categoryIdentifier
             content.sound = .default
             content.interruptionLevel = .timeSensitive
             let trigger = UNTimeIntervalNotificationTrigger(
