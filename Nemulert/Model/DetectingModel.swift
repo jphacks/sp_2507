@@ -29,7 +29,7 @@ final class DetectingModel {
     @ObservationIgnored
     private var dozingCount: Int = 0
     @ObservationIgnored
-    nonisolated(unsafe) private var motionUpdateTask: Task<Void, Never>?
+    nonisolated(unsafe) private var motionUpdateTask: Task<Void, Error>?
     @ObservationIgnored
     private let windowSize: Int = 150
 
@@ -37,6 +37,8 @@ final class DetectingModel {
     @Dependency(AlarmService.self) private var alarmService
     @ObservationIgnored
     @Dependency(DozingDetectionService.self) private var dozingDetectionService
+    @ObservationIgnored
+    @Dependency(MotionService.self) private var motionService
     @ObservationIgnored
     @Dependency(NotificationService.self) private var notificationService
 
@@ -55,18 +57,17 @@ final class DetectingModel {
                     print(error)
                 }
 
-                await self?.restartMotionUpdateTask()
+                try? await self?.restartMotionUpdateTask()
             }
 
             group.addTask { [weak self] in
                 for await isConnected in HeadphoneMotionManager().connectionUpdates() {
-                    print("Headphone connection status changed: \(isConnected ? "Connected" : "Disconnected")")
                     Task { @MainActor [weak self] in
                         self?.isConnected = isConnected
                     }
 
                     if isConnected {
-                        await self?.restartMotionUpdateTask()
+                        try? await self?.restartMotionUpdateTask()
                     }
                 }
             }
@@ -77,67 +78,48 @@ final class DetectingModel {
 
     func onSceneChanged() {
         Task {
-            await restartMotionUpdateTask()
+            try await restartMotionUpdateTask()
             try await alarmService.cancelAllAlarms()
         }
     }
 
-    private func restartMotionUpdateTask() async {
-        self.motionUpdateTask?.cancel()
-        await Task { @MainActor in
-            self.dozing = .idle
-            self.dozingCount = 0
-            self.motionUpdateTask = self.getMotionUpdateTask()
-        }.value
-        await self.motionUpdateTask?.value
-    }
-
-    private func getMotionUpdateTask() -> Task<Void, Never>? {
-        Task.detached(priority: .background) { [weak self] in
-            let queue = OperationQueue()
-            queue.name = "com.kantacky.Nemulert.headphone_motion_update"
-            queue.maxConcurrentOperationCount = 1
-            queue.qualityOfService = .background
-            do {
-                for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-                    try await self?.handleMotion(motion)
-                }
-            } catch {
-                print(error)
-            }
-        }
+    private func restartMotionUpdateTask() async throws {
+        motionUpdateTask?.cancel()
+        dozing = .idle
+        dozingCount = 0
+        motionUpdateTask = try motionService.getMotionUpdateTask(
+            name: "com.kantacky.Nemulert.headphone_motion_update",
+            handler: handleMotion
+        )
+        try await motionUpdateTask?.value
     }
 
     private func handleMotion(_ motion: CMDeviceMotion) async throws {
-        if let startingPose = self.startingPose {
+        if let startingPose {
             motion.attitude.multiply(byInverseOf: startingPose)
         } else {
-            self.startingPose = motion.attitude
+            startingPose = motion.attitude
         }
         self.motion = motion
-        self.motions.append(motion)
-        if self.motions.count >= windowSize {
+        motions.append(motion)
+        if motions.count >= windowSize {
             if try alarmService.getAlarms().isEmpty {
-                do {
-                    let motions = self.motions.prefix(windowSize)
-                    self.dozing = try await self.dozingDetectionService.predict(motions: Array(motions))
-                    if self.dozing.isDozing {
-                        self.dozingCount += 1
-                    }
-                    if self.dozingCount >= 2 {
-                        _ = try await self.alarmService.scheduleAlarm()
-                        _ = try await self.notificationService.requestNotification(
-                            title: String(localized: "Are you dozing off?"),
-                            body: String(localized: "Tap to continue working!"),
-                            categoryIdentifier: "dozing"
-                        )
-                        self.dozingCount = 0
-                    }
-                } catch {
-                    print(error)
+                let motions = Array(motions.prefix(windowSize))
+                dozing = try await dozingDetectionService.predict(motions: motions)
+                if dozing.isDozing {
+                    dozingCount += 1
+                }
+                if self.dozingCount >= 2 {
+                    _ = try await alarmService.scheduleAlarm()
+                    _ = try await notificationService.requestNotification(
+                        title: String(localized: "Are you dozing off?"),
+                        body: String(localized: "Tap to continue working!"),
+                        categoryIdentifier: "dozing"
+                    )
+                    dozingCount = 0
                 }
             }
-            self.motions.removeAll()
+            motions.removeAll()
         }
     }
 }
