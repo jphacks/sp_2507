@@ -42,7 +42,11 @@ final class DetectingModel {
             dozing = .idle
             dozingCount = 0
             Task {
-                try await connectionUpdateTask?.value
+                do {
+                    try await connectionUpdateTask?.value
+                } catch {
+                    print(error)
+                }
             }
         }
     }
@@ -51,7 +55,11 @@ final class DetectingModel {
         didSet {
             oldValue?.cancel()
             Task {
-                try await motionUpdateTask?.value
+                do {
+                    try await motionUpdateTask?.value
+                } catch {
+                    print(error)
+                }
             }
         }
     }
@@ -82,30 +90,37 @@ final class DetectingModel {
             }
         }
 
+        restartConnectionUpdateTask()
+        restartMotionUpdateTask()
+    }
+
+    func onSceneChanged() async {
         do {
-            connectionUpdateTask = try motionService.getConnectionUpdatesTask(handler: handleConnection)
+            try await alarmService.cancelAllAlarms()
         } catch {
             print(error)
         }
+        restartConnectionUpdateTask()
+        restartMotionUpdateTask()
+    }
 
-        do {
-            motionUpdateTask = try motionService.getMotionUpdatesTask(
-                name: queueName,
-                handler: handleMotion
-            )
-        } catch {
-            print(error)
+    private func restartConnectionUpdateTask() {
+        connectionUpdateTask = Task.detached(priority: .background) { [weak self] in
+            if let handler = self?.handleConnection {
+                try await self?.motionService.getConnectionUpdatesTask(handler)
+            }
         }
     }
 
-    func onSceneChanged() {
-        Task {
-            try await alarmService.cancelAllAlarms()
-            connectionUpdateTask = try motionService.getConnectionUpdatesTask(handler: handleConnection)
-            motionUpdateTask = try motionService.getMotionUpdatesTask(
-                name: queueName,
-                handler: handleMotion
-            )
+    private func restartMotionUpdateTask() {
+        motionUpdateTask = Task.detached(priority: .background) { [weak self] in
+            if let name = self?.queueName,
+               let handler = self?.handleMotion {
+                try await self?.motionService.getMotionUpdatesTask(
+                    name: name,
+                    handler: handler
+                )
+            }
         }
     }
 
@@ -113,10 +128,7 @@ final class DetectingModel {
         self.isConnected = isConnected
 
         if isConnected {
-            motionUpdateTask = try motionService.getMotionUpdatesTask(
-                name: queueName,
-                handler: handleMotion
-            )
+            restartMotionUpdateTask()
         }
     }
 

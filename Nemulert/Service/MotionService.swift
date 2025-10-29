@@ -13,28 +13,24 @@ import UserNotifications
 
 @DependencyClient
 struct MotionService {
-    var getConnectionUpdatesTask: (_ handler: @escaping @Sendable (Bool) async throws -> Void) throws -> Task<Void, Error>
-    var getMotionUpdatesTask: (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) throws -> Task<Void, Error>
+    var getConnectionUpdatesTask: @Sendable (_ handler: @escaping @Sendable (Bool) async throws -> Void) async throws -> Void
+    var getMotionUpdatesTask: @Sendable (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) async throws -> Void
 }
 
 extension MotionService: DependencyKey {
     static let liveValue = MotionService(
         getConnectionUpdatesTask: { handler in
-            Task.detached(priority: .background) {
-                for await isConnected in HeadphoneMotionManager().connectionUpdates() {
-                    try await handler(isConnected)
-                }
+            for await isConnected in HeadphoneMotionManager().connectionUpdates() {
+                try await handler(isConnected)
             }
         },
         getMotionUpdatesTask: { name, handler in
-            Task.detached(priority: .background) {
-                let queue = OperationQueue()
-                queue.name = name
-                queue.maxConcurrentOperationCount = 1
-                queue.qualityOfService = .background
-                for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-                    try await handler(motion)
-                }
+            let queue = OperationQueue()
+            queue.name = name
+            queue.maxConcurrentOperationCount = 1
+            queue.qualityOfService = .background
+            for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
+                try await handler(motion)
             }
         }
     )
@@ -45,12 +41,8 @@ extension MotionService: TestDependencyKey {
 
     static let previewValue = MotionService(
         getConnectionUpdatesTask: { _ in
-            Task {
-            }
         },
         getMotionUpdatesTask: { _, _ in
-            Task {
-            }
         }
     )
 }
