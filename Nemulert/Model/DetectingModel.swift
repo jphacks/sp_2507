@@ -36,14 +36,14 @@ final class DetectingModel {
     private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
 
     @ObservationIgnored
-    private var connectionUpdateTask: Task<Void, Error>? {
+    private var updateConnectionTask: Task<Void, Error>? {
         didSet {
             oldValue?.cancel()
             dozing = .idle
             dozingCount = 0
             Task {
                 do {
-                    try await connectionUpdateTask?.value
+                    try await updateConnectionTask?.value
                 } catch {
                     print(error)
                 }
@@ -51,12 +51,12 @@ final class DetectingModel {
         }
     }
     @ObservationIgnored
-    private var motionUpdateTask: Task<Void, Error>? {
+    private var updateMotionTask: Task<Void, Error>? {
         didSet {
             oldValue?.cancel()
             Task {
                 do {
-                    try await motionUpdateTask?.value
+                    try await updateMotionTask?.value
                 } catch {
                     print(error)
                 }
@@ -105,18 +105,18 @@ final class DetectingModel {
     }
 
     private func restartConnectionUpdateTask() {
-        connectionUpdateTask = Task.detached(priority: .background) { [weak self] in
+        updateConnectionTask = Task.detached(priority: .background) { [weak self] in
             if let handler = self?.handleConnection {
-                try await self?.motionService.getConnectionUpdatesTask(handler)
+                try await self?.motionService.updateConnection(handler)
             }
         }
     }
 
     private func restartMotionUpdateTask() {
-        motionUpdateTask = Task.detached(priority: .background) { [weak self] in
+        updateMotionTask = Task.detached(priority: .background) { [weak self] in
             if let name = self?.queueName,
                let handler = self?.handleMotion {
-                try await self?.motionService.getMotionUpdatesTask(
+                try await self?.motionService.updateMotion(
                     name: name,
                     handler: handler
                 )

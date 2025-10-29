@@ -13,18 +13,18 @@ import UserNotifications
 
 @DependencyClient
 struct MotionService {
-    var getConnectionUpdatesTask: @Sendable (_ handler: @escaping @Sendable (Bool) async throws -> Void) async throws -> Void
-    var getMotionUpdatesTask: @Sendable (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) async throws -> Void
+    var updateConnection: @Sendable (_ handler: @escaping @Sendable (Bool) async throws -> Void) async throws -> Void
+    var updateMotion: @Sendable (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) async throws -> Void
 }
 
 extension MotionService: DependencyKey {
     static let liveValue = MotionService(
-        getConnectionUpdatesTask: { handler in
+        updateConnection: { handler in
             for await isConnected in HeadphoneMotionManager().connectionUpdates() {
                 try await handler(isConnected)
             }
         },
-        getMotionUpdatesTask: { name, handler in
+        updateMotion: { name, handler in
             let queue = OperationQueue()
             queue.name = name
             queue.maxConcurrentOperationCount = 1
@@ -40,9 +40,9 @@ extension MotionService: TestDependencyKey {
     static let testValue = MotionService()
 
     static let previewValue = MotionService(
-        getConnectionUpdatesTask: { _ in
+        updateConnection: { _ in
         },
-        getMotionUpdatesTask: { _, _ in
+        updateMotion: { _, _ in
         }
     )
 }
