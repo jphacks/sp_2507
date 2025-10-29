@@ -29,10 +29,32 @@ final class DetectingModel {
     private var dozing: Dozing = .idle
     @ObservationIgnored
     private var dozingCount: Int = 0
-    @ObservationIgnored
-    nonisolated(unsafe) private var motionUpdateTask: Task<Void, Error>?
+
     @ObservationIgnored
     private let windowSize: Int = 150
+    @ObservationIgnored
+    private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
+
+    @ObservationIgnored
+    private var connectionUpdateTask: Task<Void, Error>? {
+        didSet {
+            oldValue?.cancel()
+            dozing = .idle
+            dozingCount = 0
+            Task {
+                try await connectionUpdateTask?.value
+            }
+        }
+    }
+    @ObservationIgnored
+    private var motionUpdateTask: Task<Void, Error>? {
+        didSet {
+            oldValue?.cancel()
+            Task {
+                try await motionUpdateTask?.value
+            }
+        }
+    }
 
     @ObservationIgnored
     @Dependency(\.uuid) private var uuid
@@ -45,56 +67,57 @@ final class DetectingModel {
     @ObservationIgnored
     @Dependency(NotificationService.self) private var notificationService
 
-    func onAppear() async {
-        await withTaskGroup { group in
-            group.addTask { [weak self] in
-                do {
-                    _ = try await self?.alarmService.requestAuthorization()
-                } catch {
-                    print(error)
-                }
-
-                do {
-                    _ = try await self?.notificationService.requestAuthorization()
-                } catch {
-                    print(error)
-                }
-
-                try? await self?.restartMotionUpdateTask()
+    func onAppear() {
+        Task {
+            do {
+                _ = try await alarmService.requestAuthorization()
+            } catch {
+                print(error)
             }
 
-            group.addTask { [weak self] in
-                for await isConnected in HeadphoneMotionManager().connectionUpdates() {
-                    Task { @MainActor [weak self] in
-                        self?.isConnected = isConnected
-                    }
-
-                    if isConnected {
-                        try? await self?.restartMotionUpdateTask()
-                    }
-                }
+            do {
+                _ = try await notificationService.requestAuthorization()
+            } catch {
+                print(error)
             }
+        }
 
-            await group.waitForAll()
+        do {
+            connectionUpdateTask = try motionService.getConnectionUpdatesTask(handler: handleConnection)
+        } catch {
+            print(error)
+        }
+
+        do {
+            motionUpdateTask = try motionService.getMotionUpdatesTask(
+                name: queueName,
+                handler: handleMotion
+            )
+        } catch {
+            print(error)
         }
     }
 
     func onSceneChanged() {
         Task {
-            try await restartMotionUpdateTask()
             try await alarmService.cancelAllAlarms()
+            connectionUpdateTask = try motionService.getConnectionUpdatesTask(handler: handleConnection)
+            motionUpdateTask = try motionService.getMotionUpdatesTask(
+                name: queueName,
+                handler: handleMotion
+            )
         }
     }
 
-    private func restartMotionUpdateTask() async throws {
-        motionUpdateTask?.cancel()
-        dozing = .idle
-        dozingCount = 0
-        motionUpdateTask = try motionService.getMotionUpdateTask(
-            name: "com.kantacky.Nemulert.headphone_motion_update",
-            handler: handleMotion
-        )
-        try await motionUpdateTask?.value
+    private func handleConnection(_ isConnected: Bool) throws {
+        self.isConnected = isConnected
+
+        if isConnected {
+            motionUpdateTask = try motionService.getMotionUpdatesTask(
+                name: queueName,
+                handler: handleMotion
+            )
+        }
     }
 
     private func handleMotion(_ motion: CMDeviceMotion) async throws {

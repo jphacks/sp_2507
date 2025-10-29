@@ -13,12 +13,20 @@ import UserNotifications
 
 @DependencyClient
 struct MotionService {
-    var getMotionUpdateTask: (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) throws -> Task<Void, Error>
+    var getConnectionUpdatesTask: (_ handler: @escaping @Sendable (Bool) async throws -> Void) throws -> Task<Void, Error>
+    var getMotionUpdatesTask: (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) throws -> Task<Void, Error>
 }
 
 extension MotionService: DependencyKey {
     static let liveValue = MotionService(
-        getMotionUpdateTask: { name, handler in
+        getConnectionUpdatesTask: { handler in
+            Task.detached(priority: .background) {
+                for await isConnected in HeadphoneMotionManager().connectionUpdates() {
+                    try await handler(isConnected)
+                }
+            }
+        },
+        getMotionUpdatesTask: { name, handler in
             Task.detached(priority: .background) {
                 let queue = OperationQueue()
                 queue.name = name
@@ -36,7 +44,11 @@ extension MotionService: TestDependencyKey {
     static let testValue = MotionService()
 
     static let previewValue = MotionService(
-        getMotionUpdateTask: { _, _ in
+        getConnectionUpdatesTask: { _ in
+            Task {
+            }
+        },
+        getMotionUpdatesTask: { _, _ in
             Task {
             }
         }
