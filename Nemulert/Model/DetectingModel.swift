@@ -125,7 +125,7 @@ final class DetectingModel {
                         self.dozingCount += 1
                     }
                     if self.dozingCount >= 2 {
-                        _ = try await self.alarmService.requestAlarm()
+                        _ = try await self.alarmService.scheduleAlarm()
                         _ = try await self.notificationService.requestNotification()
                         self.dozingCount = 0
                     }
