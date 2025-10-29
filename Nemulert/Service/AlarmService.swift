@@ -13,6 +13,7 @@ import SwiftUI
 @DependencyClient
 struct AlarmService {
     var requestAuthorization: @Sendable () async throws -> AlarmManager.AuthorizationState
+    var getAlarms: @Sendable () throws -> [Alarm]
     var scheduleAlarm: @Sendable () async throws -> Alarm
     var cancelAllAlarms: @Sendable () async throws -> Void
 }
@@ -21,6 +22,9 @@ extension AlarmService: DependencyKey {
     static let liveValue = AlarmService(
         requestAuthorization: {
             try await AlarmManager.shared.requestAuthorization()
+        },
+        getAlarms: {
+            try AlarmManager.shared.alarms
         },
         scheduleAlarm: {
             let stopButton = AlarmButton(

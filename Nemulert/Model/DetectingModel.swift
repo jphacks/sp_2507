@@ -117,7 +117,7 @@ final class DetectingModel {
         self.motion = motion
         self.motions.append(motion)
         if self.motions.count >= windowSize {
-            if try AlarmManager.shared.alarms.isEmpty {
+            if try alarmService.getAlarms().isEmpty {
                 do {
                     let motions = self.motions.prefix(windowSize)
                     self.dozing = try await self.dozingDetectionService.predict(motions: Array(motions))
