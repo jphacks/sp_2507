@@ -8,6 +8,7 @@
 import AlarmKit
 import CoreML
 import CoreMotion
+import Dependencies
 import Foundation
 import HeadphoneMotion
 import NotificationCenter
@@ -16,6 +17,7 @@ import SwiftUI
 
 @Observable
 final class DetectingModel {
+    @ObservationIgnored
     private var isConnected: Bool = false
     @ObservationIgnored
     private var motion: CMDeviceMotion?
@@ -27,187 +29,136 @@ final class DetectingModel {
     private var dozing: Dozing = .idle
     @ObservationIgnored
     private var dozingCount: Int = 0
-    @ObservationIgnored
-    nonisolated(unsafe) private var motionUpdateTask: Task<Void, Never>?
+
     @ObservationIgnored
     private let windowSize: Int = 150
+    @ObservationIgnored
+    private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
 
-    func onAppear() async {
-        await withTaskGroup { group in
-            group.addTask {
+    @ObservationIgnored
+    private var updateConnectionTask: Task<Void, Error>? {
+        didSet {
+            oldValue?.cancel()
+            dozing = .idle
+            dozingCount = 0
+            Task {
                 do {
-                    _ = try await AlarmManager.shared.requestAuthorization()
+                    try await updateConnectionTask?.value
                 } catch {
                     print(error)
                 }
-
+            }
+        }
+    }
+    @ObservationIgnored
+    private var updateMotionTask: Task<Void, Error>? {
+        didSet {
+            oldValue?.cancel()
+            Task {
                 do {
-                    _ = try await UNUserNotificationCenter.current().requestAuthorization(
-                        options: [.alert, .badge, .sound]
-                    )
+                    try await updateMotionTask?.value
                 } catch {
                     print(error)
                 }
-
-                await self.restartMotionUpdateTask()
             }
-
-            group.addTask {
-                for await isConnected in HeadphoneMotionManager().connectionUpdates() {
-                    print("Headphone connection status changed: \(isConnected ? "Connected" : "Disconnected")")
-                    Task { @MainActor in
-                        self.isConnected = isConnected
-                    }
-
-                    if isConnected {
-                        await self.restartMotionUpdateTask()
-                    }
-                }
-            }
-
-            await group.waitForAll()
         }
     }
 
-    func onSceneChanged() {
+    @ObservationIgnored
+    @Dependency(\.uuid) private var uuid
+    @ObservationIgnored
+    @Dependency(AlarmService.self) private var alarmService
+    @ObservationIgnored
+    @Dependency(DozingDetectionService.self) private var dozingDetectionService
+    @ObservationIgnored
+    @Dependency(MotionService.self) private var motionService
+    @ObservationIgnored
+    @Dependency(NotificationService.self) private var notificationService
+
+    func onAppear() {
         Task {
-            await restartMotionUpdateTask()
-            try await cancelAllAlarms()
-        }
-    }
-
-    private func restartMotionUpdateTask() async {
-        self.motionUpdateTask?.cancel()
-        await Task { @MainActor in
-            self.dozing = .idle
-            self.dozingCount = 0
-            self.motionUpdateTask = self.getMotionUpdateTask()
-        }.value
-        await self.motionUpdateTask?.value
-    }
-
-    private func getMotionUpdateTask() -> Task<Void, Never>? {
-        Task.detached(priority: .background) { [weak self] in
-            let queue = OperationQueue()
-            queue.name = "com.kantacky.Nemulert.headphone_motion_update"
-            queue.maxConcurrentOperationCount = 1
-            queue.qualityOfService = .background
             do {
-                for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-                    try await self?.handleMotion(motion)
-                }
+                _ = try await alarmService.requestAuthorization()
+            } catch {
+                print(error)
+            }
+
+            do {
+                _ = try await notificationService.requestAuthorization()
             } catch {
                 print(error)
             }
         }
+
+        restartConnectionUpdateTask()
+        restartMotionUpdateTask()
+    }
+
+    func onSceneChanged() async {
+        do {
+            try await alarmService.cancelAllAlarms()
+        } catch {
+            print(error)
+        }
+        restartConnectionUpdateTask()
+        restartMotionUpdateTask()
+    }
+
+    private func restartConnectionUpdateTask() {
+        updateConnectionTask = Task.detached(priority: .background) { [weak self] in
+            if let handler = self?.handleConnection {
+                try await self?.motionService.updateConnection(handler)
+            }
+        }
+    }
+
+    private func restartMotionUpdateTask() {
+        updateMotionTask = Task.detached(priority: .background) { [weak self] in
+            if let name = self?.queueName,
+               let handler = self?.handleMotion {
+                try await self?.motionService.updateMotion(
+                    name: name,
+                    handler: handler
+                )
+            }
+        }
+    }
+
+    private func handleConnection(_ isConnected: Bool) throws {
+        self.isConnected = isConnected
+
+        if isConnected {
+            restartMotionUpdateTask()
+        }
     }
 
     private func handleMotion(_ motion: CMDeviceMotion) async throws {
-        if let startingPose = self.startingPose {
+        if let startingPose {
             motion.attitude.multiply(byInverseOf: startingPose)
         } else {
-            self.startingPose = motion.attitude
+            startingPose = motion.attitude
         }
         self.motion = motion
-        self.motions.append(motion)
-        if self.motions.count >= windowSize {
-            if try AlarmManager.shared.alarms.isEmpty {
-                do {
-                    let motions = self.motions.prefix(windowSize)
-                    self.dozing = try self.predict(motions: Array(motions))
-                    if self.dozing.isDozing {
-                        self.dozingCount += 1
-                    }
-                    if self.dozingCount >= 2 {
-                        _ = try await self.setAlarm()
-                        try await self.pushNotification()
-                        self.dozingCount = 0
-                    }
-                } catch {
-                    print(error)
+        motions.append(motion)
+        if motions.count >= windowSize {
+            if try alarmService.getAlarms().isEmpty {
+                let motions = Array(motions.prefix(windowSize))
+                dozing = try await dozingDetectionService.predict(motions: motions)
+                if dozing.isDozing {
+                    dozingCount += 1
+                }
+                if self.dozingCount >= 2 {
+                    _ = try await alarmService.scheduleAlarm(id: uuid())
+                    _ = try await notificationService.requestNotification(
+                        title: String(localized: "Are you dozing off?"),
+                        body: String(localized: "Tap to continue working!"),
+                        categoryIdentifier: "dozing"
+                    )
+                    dozingCount = 0
                 }
             }
-            self.motions.removeAll()
+            motions.removeAll()
         }
-    }
-
-    private func predict(motions: [CMDeviceMotion]) throws -> Dozing {
-        let configuration = MLModelConfiguration()
-        let model = try DozingDetection(configuration: configuration)
-        let input = DozingDetectionInput(
-            attitude_pitch: try MLMultiArray(motions.map { $0.attitude.pitch }),
-            attitude_roll: try MLMultiArray(motions.map { $0.attitude.roll }),
-            attitude_yaw: try MLMultiArray(motions.map { $0.attitude.yaw }),
-            rotation_rate_x: try MLMultiArray(motions.map { $0.rotationRate.x }),
-            rotation_rate_y: try MLMultiArray(motions.map { $0.rotationRate.y }),
-            rotation_rate_z: try MLMultiArray(motions.map { $0.rotationRate.z }),
-            stateIn: try MLMultiArray(shape: [400], dataType: .double)
-        )
-        let output = try model.prediction(input: input)
-        print("\(output.label) detected.")
-        return Dozing(rawValue: output.label) ?? .idle
-    }
-
-    private func setAlarm() async throws -> Alarm {
-        let stopButton = AlarmButton(
-            text: "Back to Work",
-            textColor: .white,
-            systemImageName: "figure.run"
-        )
-        let alert = AlarmPresentation.Alert(
-            title: "Wake Up!",
-            stopButton: stopButton
-        )
-        let countDown = AlarmPresentation.Countdown(
-            title: "Counting Down..."
-        )
-        let presentation = AlarmPresentation(
-            alert: alert,
-            countdown: countDown
-        )
-        let attributes = AlarmAttributes<DozingData>(
-            presentation: presentation,
-            tintColor: Color.orange
-        )
-        let countdownDuration = Alarm.CountdownDuration(
-            preAlert: 60,
-            postAlert: 60
-        )
-        let configuration = AlarmManager.AlarmConfiguration(
-            countdownDuration: countdownDuration,
-            attributes: attributes
-        )
-        try await cancelAllAlarms()
-        return try await AlarmManager.shared.schedule(
-            id: .init(),
-            configuration: configuration
-        )
-    }
-
-    private func cancelAllAlarms() async throws {
-        for alarm in try AlarmManager.shared.alarms {
-            try AlarmManager.shared.cancel(id: alarm.id)
-        }
-    }
-
-    private func pushNotification() async throws {
-        let identifier = UUID().uuidString
-        let content = UNMutableNotificationContent()
-        content.title = String(localized: "Are you dozing off?")
-        content.body = String(localized: "Tap to continue working!")
-        content.categoryIdentifier = "dozing"
-        content.sound = .default
-        content.interruptionLevel = .timeSensitive
-        let trigger = UNTimeIntervalNotificationTrigger(
-            timeInterval: 1,
-            repeats: false
-        )
-        let request = UNNotificationRequest(
-            identifier: identifier,
-            content: content,
-            trigger: trigger
-        )
-        try await UNUserNotificationCenter.current().add(request)
     }
 }
 

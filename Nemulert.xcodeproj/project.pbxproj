@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		388C526A2EA332D400E18784 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 388C52692EA332D400E18784 /* Lottie */; };
 		F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8552EA3282E00589185 /* HeadphoneMotion */; };
+		F1434BB72EB1E69E002F0348 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = F1434BB62EB1E69E002F0348 /* Dependencies */; };
+		F1434BB92EB1E69E002F0348 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = F1434BB82EB1E69E002F0348 /* DependenciesMacros */; };
 		F1EE53B22EA3868C00C9FDED /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1EE53B12EA3868C00C9FDED /* WidgetKit.framework */; };
 		F1EE53B42EA3868C00C9FDED /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1EE53B32EA3868C00C9FDED /* SwiftUI.framework */; };
 		F1EE53C52EA3868E00C9FDED /* NemulertWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F1EE53AF2EA3868C00C9FDED /* NemulertWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -123,7 +125,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1434BB72EB1E69E002F0348 /* Dependencies in Frameworks */,
 				F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */,
+				F1434BB92EB1E69E002F0348 /* DependenciesMacros in Frameworks */,
 				388C526A2EA332D400E18784 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -211,6 +215,8 @@
 			packageProductDependencies = (
 				F12CC8552EA3282E00589185 /* HeadphoneMotion */,
 				388C52692EA332D400E18784 /* Lottie */,
+				F1434BB62EB1E69E002F0348 /* Dependencies */,
+				F1434BB82EB1E69E002F0348 /* DependenciesMacros */,
 			);
 			productName = Nemulert;
 			productReference = F1421CBE2EA14838004A5AA6 /* Nemulert.app */;
@@ -323,6 +329,7 @@
 			packageReferences = (
 				F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */,
 				388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				F1434BB52EB1E69E002F0348 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F1421CBF2EA14838004A5AA6 /* Products */;
@@ -898,6 +905,14 @@
 				minimumVersion = 0.1.0;
 			};
 		};
+		F1434BB52EB1E69E002F0348 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.10.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -910,6 +925,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */;
 			productName = HeadphoneMotion;
+		};
+		F1434BB62EB1E69E002F0348 /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1434BB52EB1E69E002F0348 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+		F1434BB82EB1E69E002F0348 /* DependenciesMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1434BB52EB1E69E002F0348 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
