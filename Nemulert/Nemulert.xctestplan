@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "39C2F98E-174E-4FC1-A7BF-51DED1A119DD",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "enabled" : false,
+      "target" : {
+        "containerPath" : "container:Nemulert.xcodeproj",
+        "identifier" : "F1421CD42EA14839004A5AA6",
+        "name" : "NemulertUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Nemulert.xcodeproj",
+        "identifier" : "F1421CCA2EA14839004A5AA6",
+        "name" : "NemulertTests"
+      }
+    }
+  ],
+  "version" : 1
+}
