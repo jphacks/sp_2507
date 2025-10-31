@@ -5,30 +5,25 @@
 //  Created by 藤間里緒香 on 2025/10/18.
 //
 
-import AlarmKit
-import CoreML
 import CoreMotion
 import Dependencies
-import Foundation
-import HeadphoneMotion
-import NotificationCenter
 import Observation
 import SwiftUI
 
 @Observable
 final class DetectingModel {
     @ObservationIgnored
-    private var isConnected: Bool = false
+    private(set) var isConnected: Bool = false
     @ObservationIgnored
-    private var motion: CMDeviceMotion?
+    private(set) var motion: CMDeviceMotion?
     @ObservationIgnored
-    private var startingPose: CMAttitude?
+    private(set) var startingPose: CMAttitude?
     @ObservationIgnored
-    private var motions: [CMDeviceMotion] = []
+    private(set) var motions: [CMDeviceMotion] = []
     @ObservationIgnored
-    private var dozing: Dozing = .idle
+    private(set) var dozing: Dozing = .idle
     @ObservationIgnored
-    private var dozingCount: Int = 0
+    private(set) var dozingCount: Int = 0
 
     @ObservationIgnored
     private let windowSize: Int = 150

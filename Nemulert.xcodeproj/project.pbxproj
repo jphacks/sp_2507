@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		388C526A2EA332D400E18784 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 388C52692EA332D400E18784 /* Lottie */; };
+		F126EC982EB394C400DA9321 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = F126EC972EB394C400DA9321 /* Dependencies */; };
 		F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8552EA3282E00589185 /* HeadphoneMotion */; };
 		F1434BB72EB1E69E002F0348 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = F1434BB62EB1E69E002F0348 /* Dependencies */; };
 		F1434BB92EB1E69E002F0348 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = F1434BB82EB1E69E002F0348 /* DependenciesMacros */; };
@@ -136,6 +137,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F126EC982EB394C400DA9321 /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +242,7 @@
 			);
 			name = NemulertTests;
 			packageProductDependencies = (
+				F126EC972EB394C400DA9321 /* Dependencies */,
 			);
 			productName = NemulertTests;
 			productReference = F1421CCB2EA14839004A5AA6 /* NemulertTests.xctest */;
@@ -920,6 +923,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		F126EC972EB394C400DA9321 /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1434BB52EB1E69E002F0348 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
 		};
 		F12CC8552EA3282E00589185 /* HeadphoneMotion */ = {
 			isa = XCSwiftPackageProductDependency;
