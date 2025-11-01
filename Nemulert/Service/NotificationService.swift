@@ -10,7 +10,7 @@ import DependenciesMacros
 import UserNotifications
 
 @DependencyClient
-struct NotificationService {
+nonisolated struct NotificationService {
     var requestAuthorization: @Sendable () async throws -> Bool
     var requestNotification: @Sendable (_ title: String, _ body: String, _ categoryIdentifier: String) async throws -> Void
 }
@@ -44,7 +44,7 @@ extension NotificationService: DependencyKey {
     )
 }
 
-extension NotificationService: TestDependencyKey {
+nonisolated extension NotificationService: TestDependencyKey {
     static let testValue = NotificationService()
 
     static let previewValue = NotificationService(
@@ -54,4 +54,11 @@ extension NotificationService: TestDependencyKey {
         requestNotification: { _, _, _ in
         }
     )
+}
+
+extension DependencyValues {
+    nonisolated var notificationService: NotificationService {
+        get { self[NotificationService.self] }
+        set { self[NotificationService.self] = newValue }
+    }
 }

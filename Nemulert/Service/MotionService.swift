@@ -12,7 +12,7 @@ import HeadphoneMotion
 import UserNotifications
 
 @DependencyClient
-struct MotionService {
+nonisolated struct MotionService {
     var updateConnection: @Sendable (_ handler: @escaping @Sendable (Bool) async throws -> Void) async throws -> Void
     var updateMotion: @Sendable (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) async throws -> Void
 }
@@ -36,7 +36,7 @@ extension MotionService: DependencyKey {
     )
 }
 
-extension MotionService: TestDependencyKey {
+nonisolated extension MotionService: TestDependencyKey {
     static let testValue = MotionService()
 
     static let previewValue = MotionService(
@@ -45,4 +45,11 @@ extension MotionService: TestDependencyKey {
         updateMotion: { _, _ in
         }
     )
+}
+
+extension DependencyValues {
+    nonisolated var motionService: MotionService {
+        get { self[MotionService.self] }
+        set { self[MotionService.self] = newValue }
+    }
 }

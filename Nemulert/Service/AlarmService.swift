@@ -11,7 +11,7 @@ import DependenciesMacros
 import SwiftUI
 
 @DependencyClient
-struct AlarmService {
+nonisolated struct AlarmService {
     var requestAuthorization: @Sendable () async throws -> AlarmManager.AuthorizationState
     var getAlarms: @Sendable () throws -> [Alarm]
     var scheduleAlarm: @Sendable (_ id: Alarm.ID) async throws -> Void
@@ -73,7 +73,7 @@ extension AlarmService: DependencyKey {
     }
 }
 
-extension AlarmService: TestDependencyKey {
+nonisolated extension AlarmService: TestDependencyKey {
     static let testValue = AlarmService()
 
     static let previewValue = AlarmService(
@@ -88,4 +88,11 @@ extension AlarmService: TestDependencyKey {
         cancelAllAlarms: {
         }
     )
+}
+
+extension DependencyValues {
+    nonisolated var alarmService: AlarmService {
+        get { self[AlarmService.self] }
+        set { self[AlarmService.self] = newValue }
+    }
 }

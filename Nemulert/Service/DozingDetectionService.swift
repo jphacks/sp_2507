@@ -12,7 +12,7 @@ import DependenciesMacros
 import UserNotifications
 
 @DependencyClient
-struct DozingDetectionService {
+nonisolated struct DozingDetectionService {
     var predict: @Sendable (_ motions: [CMDeviceMotion]) async throws -> Dozing
 }
 
@@ -38,7 +38,7 @@ extension DozingDetectionService: DependencyKey {
     )
 }
 
-extension DozingDetectionService: TestDependencyKey {
+nonisolated extension DozingDetectionService: TestDependencyKey {
     static let testValue = DozingDetectionService()
 
     static let previewValue = DozingDetectionService(
@@ -46,4 +46,11 @@ extension DozingDetectionService: TestDependencyKey {
             .idle
         }
     )
+}
+
+extension DependencyValues {
+    nonisolated var dozingDetectionService: DozingDetectionService {
+        get { self[DozingDetectionService.self] }
+        set { self[DozingDetectionService.self] = newValue }
+    }
 }
