@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		30B0F16D2EA371140021D1A4 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 30B0F16C2EA371140021D1A4 /* AsyncAlgorithms */; };
 		388C526A2EA332D400E18784 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 388C52692EA332D400E18784 /* Lottie */; };
-		F12CC8512EA3273100589185 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8502EA3273100589185 /* Dependencies */; };
-		F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8522EA3273100589185 /* DependenciesMacros */; };
 		F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */ = {isa = PBXBuildFile; productRef = F12CC8552EA3282E00589185 /* HeadphoneMotion */; };
+		F1EE53B22EA3868C00C9FDED /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1EE53B12EA3868C00C9FDED /* WidgetKit.framework */; };
+		F1EE53B42EA3868C00C9FDED /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1EE53B32EA3868C00C9FDED /* SwiftUI.framework */; };
+		F1EE53C52EA3868E00C9FDED /* NemulertWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F1EE53AF2EA3868C00C9FDED /* NemulertWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,12 +29,37 @@
 			remoteGlobalIDString = F1421CBD2EA14838004A5AA6;
 			remoteInfo = Nemulert;
 		};
+		F1EE53C32EA3868E00C9FDED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F1421CB62EA14838004A5AA6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1EE53AE2EA3868C00C9FDED;
+			remoteInfo = NemulertWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F1EE53CA2EA3868E00C9FDED /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F1EE53C52EA3868E00C9FDED /* NemulertWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F1421CBE2EA14838004A5AA6 /* Nemulert.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nemulert.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1421CCB2EA14839004A5AA6 /* NemulertTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NemulertTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1421CD52EA14839004A5AA6 /* NemulertUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NemulertUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1EE53AF2EA3868C00C9FDED /* NemulertWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NemulertWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1EE53B12EA3868C00C9FDED /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		F1EE53B32EA3868C00C9FDED /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		F1EE53D32EA3879900C9FDED /* AlarmKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlarmKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/AlarmKit.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -66,6 +91,11 @@
 			path = NemulertUITests;
 			sourceTree = "<group>";
 		};
+		F1EE53B52EA3868C00C9FDED /* NemulertWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NemulertWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,11 +103,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F12CC8532EA3273100589185 /* DependenciesMacros in Frameworks */,
 				F12CC8562EA3282E00589185 /* HeadphoneMotion in Frameworks */,
-				F12CC8512EA3273100589185 /* Dependencies in Frameworks */,
 				388C526A2EA332D400E18784 /* Lottie in Frameworks */,
-				30B0F16D2EA371140021D1A4 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +122,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1EE53AC2EA3868C00C9FDED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1EE53B42EA3868C00C9FDED /* SwiftUI.framework in Frameworks */,
+				F1EE53B22EA3868C00C9FDED /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -104,6 +140,8 @@
 				F1421CC02EA14838004A5AA6 /* Nemulert */,
 				F1421CCE2EA14839004A5AA6 /* NemulertTests */,
 				F1421CD82EA14839004A5AA6 /* NemulertUITests */,
+				F1EE53B52EA3868C00C9FDED /* NemulertWidget */,
+				F1EE53B02EA3868C00C9FDED /* Frameworks */,
 				F1421CBF2EA14838004A5AA6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -114,8 +152,19 @@
 				F1421CBE2EA14838004A5AA6 /* Nemulert.app */,
 				F1421CCB2EA14839004A5AA6 /* NemulertTests.xctest */,
 				F1421CD52EA14839004A5AA6 /* NemulertUITests.xctest */,
+				F1EE53AF2EA3868C00C9FDED /* NemulertWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F1EE53B02EA3868C00C9FDED /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F1EE53D32EA3879900C9FDED /* AlarmKit.framework */,
+				F1EE53B12EA3868C00C9FDED /* WidgetKit.framework */,
+				F1EE53B32EA3868C00C9FDED /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,21 +177,20 @@
 				F1421CBA2EA14838004A5AA6 /* Sources */,
 				F1421CBB2EA14838004A5AA6 /* Frameworks */,
 				F1421CBC2EA14838004A5AA6 /* Resources */,
+				F1EE53CA2EA3868E00C9FDED /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F1EE53C42EA3868E00C9FDED /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				F1421CC02EA14838004A5AA6 /* Nemulert */,
 			);
 			name = Nemulert;
 			packageProductDependencies = (
-				F12CC8502EA3273100589185 /* Dependencies */,
-				F12CC8522EA3273100589185 /* DependenciesMacros */,
 				F12CC8552EA3282E00589185 /* HeadphoneMotion */,
 				388C52692EA332D400E18784 /* Lottie */,
-				30B0F16C2EA371140021D1A4 /* AsyncAlgorithms */,
 			);
 			productName = Nemulert;
 			productReference = F1421CBE2EA14838004A5AA6 /* Nemulert.app */;
@@ -194,6 +242,28 @@
 			productReference = F1421CD52EA14839004A5AA6 /* NemulertUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		F1EE53AE2EA3868C00C9FDED /* NemulertWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1EE53C62EA3868E00C9FDED /* Build configuration list for PBXNativeTarget "NemulertWidgetExtension" */;
+			buildPhases = (
+				F1EE53AB2EA3868C00C9FDED /* Sources */,
+				F1EE53AC2EA3868C00C9FDED /* Frameworks */,
+				F1EE53AD2EA3868C00C9FDED /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F1EE53B52EA3868C00C9FDED /* NemulertWidget */,
+			);
+			name = NemulertWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = NemulertWidgetExtension;
+			productReference = F1EE53AF2EA3868C00C9FDED /* NemulertWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -215,6 +285,9 @@
 						CreatedOnToolsVersion = 26.0.1;
 						TestTargetID = F1421CBD2EA14838004A5AA6;
 					};
+					F1EE53AE2EA3868C00C9FDED = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
 				};
 			};
 			buildConfigurationList = F1421CB92EA14838004A5AA6 /* Build configuration list for PBXProject "Nemulert" */;
@@ -228,10 +301,8 @@
 			mainGroup = F1421CB52EA14838004A5AA6;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */,
 				388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				30B0F16B2EA371140021D1A4 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F1421CBF2EA14838004A5AA6 /* Products */;
@@ -241,6 +312,7 @@
 				F1421CBD2EA14838004A5AA6 /* Nemulert */,
 				F1421CCA2EA14839004A5AA6 /* NemulertTests */,
 				F1421CD42EA14839004A5AA6 /* NemulertUITests */,
+				F1EE53AE2EA3868C00C9FDED /* NemulertWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -261,6 +333,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F1421CD32EA14839004A5AA6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1EE53AD2EA3868C00C9FDED /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -291,6 +370,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1EE53AB2EA3868C00C9FDED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -303,6 +389,11 @@
 			isa = PBXTargetDependency;
 			target = F1421CBD2EA14838004A5AA6 /* Nemulert */;
 			targetProxy = F1421CD62EA14839004A5AA6 /* PBXContainerItemProxy */;
+		};
+		F1EE53C42EA3868E00C9FDED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1EE53AE2EA3868C00C9FDED /* NemulertWidgetExtension */;
+			targetProxy = F1EE53C32EA3868E00C9FDED /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -645,6 +736,81 @@
 			};
 			name = Release;
 		};
+		F1EE53C72EA3868E00C9FDED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4YP7SQBLYV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NemulertWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NemulertWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.furari.Nemulert.NemulertWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development co.furari.Nemulert.NemulertWidget";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F1EE53C82EA3868E00C9FDED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4YP7SQBLYV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NemulertWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NemulertWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.furari.Nemulert.NemulertWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development co.furari.Nemulert.NemulertWidget";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -684,31 +850,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		F1EE53C62EA3868E00C9FDED /* Build configuration list for PBXNativeTarget "NemulertWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1EE53C72EA3868E00C9FDED /* Debug */,
+				F1EE53C82EA3868E00C9FDED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		30B0F16B2EA371140021D1A4 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.4;
-			};
-		};
 		388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 4.5.2;
-			};
-		};
-		F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.10.0;
 			};
 		};
 		F12CC8542EA3282E00589185 /* XCRemoteSwiftPackageReference "kantacky-kit" */ = {
@@ -722,25 +881,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		30B0F16C2EA371140021D1A4 /* AsyncAlgorithms */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 30B0F16B2EA371140021D1A4 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
-			productName = AsyncAlgorithms;
-		};
 		388C52692EA332D400E18784 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 388C52682EA332D400E18784 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
-		};
-		F12CC8502EA3273100589185 /* Dependencies */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
-			productName = Dependencies;
-		};
-		F12CC8522EA3273100589185 /* DependenciesMacros */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F12CC84F2EA3273100589185 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
-			productName = DependenciesMacros;
 		};
 		F12CC8552EA3282E00589185 /* HeadphoneMotion */ = {
 			isa = XCSwiftPackageProductDependency;
