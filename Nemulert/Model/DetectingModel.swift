@@ -40,7 +40,7 @@ final class DetectingModel {
                 do {
                     try await updateConnectionTask?.value
                 } catch {
-                    print(error)
+                    Logger.error(error)
                 }
             }
         }
@@ -53,7 +53,7 @@ final class DetectingModel {
                 do {
                     try await updateMotionTask?.value
                 } catch {
-                    print(error)
+                    Logger.error(error)
                 }
             }
         }
@@ -73,15 +73,17 @@ final class DetectingModel {
     func onAppear() {
         Task {
             do {
-                _ = try await alarmService.requestAuthorization()
+                let authorization = try await alarmService.requestAuthorization()
+                Logger.info("Alarm authorization status: \(authorization)")
             } catch {
-                print(error)
+                Logger.error(error)
             }
 
             do {
-                _ = try await notificationService.requestAuthorization()
+                let isAuthorized = try await notificationService.requestAuthorization()
+                Logger.info("Notification authorization granted: \(isAuthorized)")
             } catch {
-                print(error)
+                Logger.error(error)
             }
         }
 
@@ -93,7 +95,7 @@ final class DetectingModel {
         do {
             try await alarmService.cancelAllAlarms()
         } catch {
-            print(error)
+            Logger.error(error)
         }
         restartConnectionUpdateTask()
         restartMotionUpdateTask()
