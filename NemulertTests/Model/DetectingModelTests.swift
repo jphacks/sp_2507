@@ -19,7 +19,10 @@ struct DetectingModelTests {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
             }
-            $0.motionService.updateConnection = { _ in
+            $0.motionService.connectionUpdates = {
+                AsyncStream { continuation in
+                    continuation.finish()
+                }
             }
         } operation: {
             DetectingModel()
@@ -40,7 +43,10 @@ struct DetectingModelTests {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
             }
-            $0.motionService.updateConnection = { _ in
+            $0.motionService.connectionUpdates = {
+                AsyncStream { continuation in
+                    continuation.finish()
+                }
             }
             $0.notificationService.requestAuthorization = {
                 false
