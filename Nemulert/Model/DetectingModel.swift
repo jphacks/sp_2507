@@ -34,28 +34,12 @@ final class DetectingModel {
     private var updateConnectionTask: Task<Void, Error>? {
         didSet {
             oldValue?.cancel()
-            dozing = .idle
-            dozingCount = 0
-            Task {
-                do {
-                    try await updateConnectionTask?.value
-                } catch {
-                    Logger.error(error)
-                }
-            }
         }
     }
     @ObservationIgnored
     private var updateMotionTask: Task<Void, Error>? {
         didSet {
             oldValue?.cancel()
-            Task {
-                do {
-                    try await updateMotionTask?.value
-                } catch {
-                    Logger.error(error)
-                }
-            }
         }
     }
 
@@ -102,21 +86,21 @@ final class DetectingModel {
     }
 
     private func restartConnectionUpdateTask() {
-        updateConnectionTask = Task.detached(priority: .background) { [weak self] in
-            if let handler = self?.handleConnection {
-                try await self?.motionService.updateConnection(handler)
+        dozing = .idle
+        dozingCount = 0
+        updateConnectionTask = Task {
+            for await isConnected in try motionService.connectionUpdates() {
+                Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
+                try handleConnection(isConnected)
             }
         }
     }
 
     private func restartMotionUpdateTask() {
-        updateMotionTask = Task.detached(priority: .background) { [weak self] in
-            if let name = self?.queueName,
-               let handler = self?.handleMotion {
-                try await self?.motionService.updateMotion(
-                    name: name,
-                    handler: handler
-                )
+        updateMotionTask = Task {
+            for try await motion in try await motionService.motionUpdates(queueName: queueName) {
+                Logger.info("Motion update received")
+                try await handleMotion(motion)
             }
         }
     }
@@ -141,6 +125,7 @@ final class DetectingModel {
             if try alarmService.getAlarms().isEmpty {
                 let motions = Array(motions.prefix(windowSize))
                 dozing = try await dozingDetectionService.predict(motions: motions)
+                Logger.info("Dozing prediction: \(dozing)")
                 if dozing.isDozing {
                     dozingCount += 1
                 }

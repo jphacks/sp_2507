@@ -13,25 +13,21 @@ import UserNotifications
 
 @DependencyClient
 nonisolated struct MotionService {
-    var updateConnection: @Sendable (_ handler: @escaping @Sendable (Bool) async throws -> Void) async throws -> Void
-    var updateMotion: @Sendable (_ name: String, _ handler: @escaping @Sendable (CMDeviceMotion) async throws -> Void) async throws -> Void
+    var connectionUpdates: @Sendable () throws -> AsyncStream<Bool>
+    var motionUpdates: @Sendable (_ queueName: String) async throws -> AsyncThrowingStream<CMDeviceMotion, Error>
 }
 
 extension MotionService: DependencyKey {
     static let liveValue = MotionService(
-        updateConnection: { handler in
-            for await isConnected in HeadphoneMotionManager().connectionUpdates() {
-                try await handler(isConnected)
-            }
+        connectionUpdates: {
+            HeadphoneMotionManager().connectionUpdates()
         },
-        updateMotion: { name, handler in
+        motionUpdates: { queueName in
             let queue = OperationQueue()
-            queue.name = name
+            queue.name = queueName
             queue.maxConcurrentOperationCount = 1
             queue.qualityOfService = .background
-            for try await motion in try HeadphoneMotionUpdate.updates(queue: queue) {
-                try await handler(motion)
-            }
+            return try HeadphoneMotionUpdate.updates(queue: queue)
         }
     )
 }
@@ -40,9 +36,15 @@ nonisolated extension MotionService: TestDependencyKey {
     static let testValue = MotionService()
 
     static let previewValue = MotionService(
-        updateConnection: { _ in
+        connectionUpdates: {
+            AsyncStream<Bool> { continuation in
+                continuation.finish()
+            }
         },
-        updateMotion: { _, _ in
+        motionUpdates: { _ in
+            AsyncThrowingStream<CMDeviceMotion, Error> { continuation in
+                continuation.finish()
+            }
         }
     )
 }
