@@ -119,6 +119,14 @@ Build for Development
 
 Build for App Store
 
+### ios test
+
+```sh
+[bundle exec] fastlane ios test
+```
+
+Test
+
 ### ios distribute_to_testflight
 
 ```sh

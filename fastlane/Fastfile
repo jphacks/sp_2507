@@ -131,6 +131,11 @@ platform :ios do
     )
   end
 
+  desc "Test"
+  lane :test do
+    scan
+  end
+
   desc "Distribute to TestFlight"
   lane :distribute_to_testflight do
     pilot(

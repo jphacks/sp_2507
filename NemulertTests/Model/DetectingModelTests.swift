@@ -19,6 +19,8 @@ struct DetectingModelTests {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
             }
+            $0.motionService.updateConnection = { _ in
+            }
         } operation: {
             DetectingModel()
         }
@@ -37,6 +39,8 @@ struct DetectingModelTests {
         let model = withDependencies {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
+            }
+            $0.motionService.updateConnection = { _ in
             }
             $0.notificationService.requestAuthorization = {
                 false
