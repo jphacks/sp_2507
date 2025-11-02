@@ -90,6 +90,7 @@ final class DetectingModel {
         dozingCount = 0
         updateConnectionTask = Task {
             for await isConnected in try motionService.connectionUpdates() {
+                Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
                 try handleConnection(isConnected)
             }
         }
@@ -98,6 +99,7 @@ final class DetectingModel {
     private func restartMotionUpdateTask() {
         updateMotionTask = Task {
             for try await motion in try await motionService.motionUpdates(queueName: queueName) {
+                Logger.info("Motion update received")
                 try await handleMotion(motion)
             }
         }
@@ -123,6 +125,7 @@ final class DetectingModel {
             if try alarmService.getAlarms().isEmpty {
                 let motions = Array(motions.prefix(windowSize))
                 dozing = try await dozingDetectionService.predict(motions: motions)
+                Logger.info("Dozing prediction: \(dozing)")
                 if dozing.isDozing {
                     dozingCount += 1
                 }
