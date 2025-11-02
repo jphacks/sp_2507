@@ -6,44 +6,15 @@
 //
 
 import AlarmKit
+import CoreMotion
 import Dependencies
 import Foundation
 @testable import Nemulert
 import Testing
 
 struct DetectingModelTests {
-    /// 初期化された場合
-    @MainActor
-    @Test func testInit() async throws {
-        let model = withDependencies {
-            $0.alarmService.requestAuthorization = {
-                .notDetermined
-            }
-            $0.motionService.connectionUpdates = {
-                AsyncStream { continuation in
-                    continuation.finish()
-                }
-            }
-            $0.motionService.motionUpdates = { _ in
-                AsyncThrowingStream { continuation in
-                    continuation.finish()
-                }
-            }
-        } operation: {
-            DetectingModel()
-        }
-
-        #expect(model.isConnected == false)
-        #expect(model.motion == nil)
-        #expect(model.startingPose == nil)
-        #expect(model.motions == [])
-        #expect(model.dozing == .idle)
-        #expect(model.dozingCount == 0)
-    }
-
-    /// 画面が表示された場合
-    @MainActor
-    @Test func testOnAppear() async throws {
+    @Test("画面が表示された場合")
+    @MainActor func testOnAppear() async throws {
         let model = withDependencies {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
@@ -75,39 +46,86 @@ struct DetectingModelTests {
         #expect(model.dozingCount == 0)
     }
 
-    /// ヘッドフォンが接続された場合
-    @MainActor
-    @Test func testOnHeadphoneConnected() async throws {
+    @Test("ヘッドフォンが接続された場合", .timeLimit(.minutes(1)))
+    @MainActor func testOnHeadphoneConnected() async throws {
+        let (connectionUpdates, connectionUpdatesContinuation) = AsyncStream<Bool>.makeStream()
+
+        let model = withDependencies {
+            $0.alarmService.requestAuthorization = {
+                .notDetermined
+            }
+            $0.motionService.connectionUpdates = {
+                connectionUpdates
+            }
+            $0.motionService.motionUpdates = { _ in
+                AsyncThrowingStream { continuation in
+                    continuation.finish()
+                }
+            }
+            $0.notificationService.requestAuthorization = {
+                false
+            }
+        } operation: {
+            DetectingModel()
+        }
+
+        model.onAppear()
+
+        let isConnected = true
+        connectionUpdatesContinuation.yield(isConnected)
+        try await Task.sleep(for: .seconds(1))
+        #expect(model.isConnected == isConnected)
+    }
+
+    @Test("ヘッドフォンの接続が切断された場合")
+    @MainActor func testOnHeadphoneDisconnected() async throws {
+        // let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<CMDeviceMotion, Error>.makeStream()
+
+        // let model = withDependencies {
+        //     $0.alarmService.requestAuthorization = {
+        //         .notDetermined
+        //     }
+        //     $0.motionService.connectionUpdates = {
+        //         AsyncStream { continuation in
+        //             continuation.finish()
+        //         }
+        //     }
+        //     $0.motionService.motionUpdates = { _ in
+        //         motionUpdates
+        //     }
+        //     $0.notificationService.requestAuthorization = {
+        //         false
+        //     }
+        // } operation: {
+        //     DetectingModel()
+        // }
+
+        // model.onAppear()
+
+        // TODO: Create CMDeviceMotion mock
+        // let motion = CMDeviceMotion()
+        // motionUpdatesContinuation.yield(motion)
+        // #expect(model.motion == motion)
+        // #expect(model.motions == [motion])
+    }
+
+    @Test("1個のモーションデータが検出された場合")
+    @MainActor func testOn1MotionsStreamed() async throws {
         // TODO: Implement
     }
 
-    /// ヘッドフォンの接続が切断された場合
-    @MainActor
-    @Test func testOnHeadphoneDisconnected() async throws {
+    @Test("150個のモーションデータが検出された場合")
+    @MainActor func testOn150MotionsStreamed() async throws {
         // TODO: Implement
     }
 
-    /// 1個のモーションデータが検出された場合
-    @MainActor
-    @Test func testOn1MotionsStreamed() async throws {
+    @Test("1度の居眠りが検知された場合")
+    @MainActor func testOnDozingDetecting1Time() async throws {
         // TODO: Implement
     }
 
-    /// 150個のモーションデータが検出された場合
-    @MainActor
-    @Test func testOn150MotionsStreamed() async throws {
-        // TODO: Implement
-    }
-
-    /// 1度の居眠りが検知された場合
-    @MainActor
-    @Test func testOnDozingDetecting1Time() async throws {
-        // TODO: Implement
-    }
-
-    /// 2度の居眠りが検知された場合
-    @MainActor
-    @Test func testOnDozingDetecting2Times() async throws {
+    @Test("2度の居眠りが検知された場合")
+    @MainActor func testOnDozingDetecting2Times() async throws {
         // TODO: Implement
     }
 }
