@@ -16,39 +16,11 @@ struct DetectingModelTests {
     @MainActor
     @Test func testInit() async throws {
         let model = withDependencies {
-            $0.uuid = UUIDGenerator {
-                UUID(0)
+            $0.alarmService.requestAuthorization = {
+                .notDetermined
             }
-            $0[AlarmService.self] = AlarmService(
-                requestAuthorization: {
-                    .authorized
-                },
-                getAlarms: {
-                    []
-                },
-                scheduleAlarm: { _ in
-                },
-                cancelAllAlarms: {
-                }
-            )
-            $0[DozingDetectionService.self] = DozingDetectionService(
-                predict: { _ in
-                    .idle
-                }
-            )
-            $0[MotionService.self] = MotionService(
-                updateConnection: { _ in
-                },
-                updateMotion: { _, _ in
-                }
-            )
-            $0[NotificationService.self] = NotificationService(
-                requestAuthorization: {
-                    true
-                },
-                requestNotification: { _, _, _ in
-                }
-            )
+            $0.motionService.updateConnection = { _ in
+            }
         } operation: {
             DetectingModel()
         }
@@ -65,39 +37,14 @@ struct DetectingModelTests {
     @MainActor
     @Test func testOnAppear() async throws {
         let model = withDependencies {
-            $0.uuid = UUIDGenerator {
-                UUID(0)
+            $0.alarmService.requestAuthorization = {
+                .notDetermined
             }
-            $0[AlarmService.self] = AlarmService(
-                requestAuthorization: {
-                    .authorized
-                },
-                getAlarms: {
-                    []
-                },
-                scheduleAlarm: { _ in
-                },
-                cancelAllAlarms: {
-                }
-            )
-            $0[DozingDetectionService.self] = DozingDetectionService(
-                predict: { _ in
-                    .idle
-                }
-            )
-            $0[MotionService.self] = MotionService(
-                updateConnection: { _ in
-                },
-                updateMotion: { _, _ in
-                }
-            )
-            $0[NotificationService.self] = NotificationService(
-                requestAuthorization: {
-                    true
-                },
-                requestNotification: { _, _, _ in
-                }
-            )
+            $0.motionService.updateConnection = { _ in
+            }
+            $0.notificationService.requestAuthorization = {
+                false
+            }
         } operation: {
             DetectingModel()
         }

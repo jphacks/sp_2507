@@ -1,0 +1,2 @@
+scheme("Nemulert")
+devices(["iPhone 17 Pro (26.0)"])
