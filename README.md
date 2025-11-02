@@ -1,5 +1,7 @@
 # Nemulert（ネムラート）
 
+[![CI](https://github.com/jphacks/sp_2507/actions/workflows/ci.yml/badge.svg)](https://github.com/jphacks/sp_2507/actions/workflows/ci.yml)
+
 [![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2025/05/JPHACKS2025_ogp.jpg)](https://www.youtube.com/watch?v=lA9EluZugD8)
 
 ## 製品概要
