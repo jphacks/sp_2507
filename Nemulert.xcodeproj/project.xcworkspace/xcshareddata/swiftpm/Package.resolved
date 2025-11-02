@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kantacky/kantacky-kit",
       "state" : {
-        "revision" : "76645081317b7534dac4e2d4a553ef0d1df22d93",
-        "version" : "0.1.3"
+        "revision" : "8d8ca6b790314428088864f8a53fa8d1fc9f7090",
+        "version" : "0.1.4"
       }
     },
     {
