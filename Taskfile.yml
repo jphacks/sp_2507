@@ -15,6 +15,9 @@ tasks:
     desc: Install dependencies
     cmds:
       - bundle install
+
+  match-fetch-development:
+    cmds:
       - "{{.FASTLANE}} match_fetch_development"
 
   register-device:
