@@ -13,7 +13,7 @@ import Foundation
 import Testing
 
 struct DetectingModelTests {
-    @Test("画面が表示された場合")
+    @Test("画面が表示された")
     @MainActor func testOnAppear() async throws {
         let model = withDependencies {
             $0.alarmService.requestAuthorization = {
@@ -46,7 +46,7 @@ struct DetectingModelTests {
         #expect(model.dozingCount == 0)
     }
 
-    @Test("ヘッドフォンが接続された場合", .timeLimit(.minutes(1)))
+    @Test("ヘッドフォンが接続された", .timeLimit(.minutes(1)))
     @MainActor func testOnHeadphoneConnected() async throws {
         let (connectionUpdates, connectionUpdatesContinuation) = AsyncStream<Bool>.makeStream()
 
@@ -77,7 +77,7 @@ struct DetectingModelTests {
         #expect(model.isConnected == isConnected)
     }
 
-    @Test("ヘッドフォンの接続が切断された場合")
+    @Test("ヘッドフォンの接続が切断された")
     @MainActor func testOnHeadphoneDisconnected() async throws {
         // let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<CMDeviceMotion, Error>.makeStream()
 
@@ -109,22 +109,22 @@ struct DetectingModelTests {
         // #expect(model.motions == [motion])
     }
 
-    @Test("1個のモーションデータが検出された場合")
+    @Test("1個のモーションデータが検出された")
     @MainActor func testOn1MotionsStreamed() async throws {
         // TODO: Implement
     }
 
-    @Test("150個のモーションデータが検出された場合")
+    @Test("150個のモーションデータが検出された")
     @MainActor func testOn150MotionsStreamed() async throws {
         // TODO: Implement
     }
 
-    @Test("1度の居眠りが検知された場合")
+    @Test("1度の居眠りが検知された")
     @MainActor func testOnDozingDetecting1Time() async throws {
         // TODO: Implement
     }
 
-    @Test("2度の居眠りが検知された場合")
+    @Test("2度の居眠りが検知された")
     @MainActor func testOnDozingDetecting2Times() async throws {
         // TODO: Implement
     }
