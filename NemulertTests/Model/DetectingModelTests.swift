@@ -24,6 +24,11 @@ struct DetectingModelTests {
                     continuation.finish()
                 }
             }
+            $0.motionService.motionUpdates = { _ in
+                AsyncThrowingStream { continuation in
+                    continuation.finish()
+                }
+            }
         } operation: {
             DetectingModel()
         }
@@ -45,6 +50,11 @@ struct DetectingModelTests {
             }
             $0.motionService.connectionUpdates = {
                 AsyncStream { continuation in
+                    continuation.finish()
+                }
+            }
+            $0.motionService.motionUpdates = { _ in
+                AsyncThrowingStream { continuation in
                     continuation.finish()
                 }
             }
