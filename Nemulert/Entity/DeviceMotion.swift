@@ -7,7 +7,19 @@
 
 import CoreMotion
 
-struct DeviceMotion {
+protocol DeviceMotionProtocol {
+    associatedtype AttitudeType: AttitudeProtocol
+
+    var attitude: AttitudeType { get }
+    var rotationRate: CMRotationRate { get }
+    var gravity: CMAcceleration { get }
+    var userAcceleration: CMAcceleration { get }
+    var magneticField: CMCalibratedMagneticField { get }
+    var heading: Double { get }
+    var sensorLocation: CMDeviceMotion.SensorLocation { get }
+}
+
+struct DeviceMotion: DeviceMotionProtocol {
     let attitude: Attitude
     let rotationRate: CMRotationRate
     let gravity: CMAcceleration
@@ -43,4 +55,7 @@ struct DeviceMotion {
         self.heading = deviceMotion.heading
         self.sensorLocation = deviceMotion.sensorLocation
     }
+}
+
+extension CMDeviceMotion: DeviceMotionProtocol {
 }

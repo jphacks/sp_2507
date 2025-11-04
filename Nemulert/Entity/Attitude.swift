@@ -7,7 +7,15 @@
 
 import CoreMotion
 
-struct Attitude {
+protocol AttitudeProtocol {
+    var roll: Double { get }
+    var pitch: Double { get }
+    var yaw: Double { get }
+    var rotationMatrix: CMRotationMatrix { get }
+    var quaternion: CMQuaternion { get }
+}
+
+struct Attitude: AttitudeProtocol {
     let roll: Double
     let pitch: Double
     let yaw: Double
@@ -35,4 +43,7 @@ struct Attitude {
         self.rotationMatrix = attitude.rotationMatrix
         self.quaternion = attitude.quaternion
     }
+}
+
+extension CMAttitude: AttitudeProtocol {
 }
