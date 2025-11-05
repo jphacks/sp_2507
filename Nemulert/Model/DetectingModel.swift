@@ -5,7 +5,6 @@
 //  Created by 藤間里緒香 on 2025/10/18.
 //
 
-import CoreMotion
 import Dependencies
 import Observation
 import SwiftUI
@@ -15,11 +14,9 @@ final class DetectingModel {
     @ObservationIgnored
     private(set) var isConnected: Bool = false
     @ObservationIgnored
-    private(set) var motion: CMDeviceMotion?
+    private(set) var motion: DeviceMotion?
     @ObservationIgnored
-    private(set) var startingPose: CMAttitude?
-    @ObservationIgnored
-    private(set) var motions: [CMDeviceMotion] = []
+    private(set) var motions: [DeviceMotion] = []
     @ObservationIgnored
     private(set) var dozing: Dozing = .idle
     @ObservationIgnored
@@ -113,12 +110,7 @@ final class DetectingModel {
         }
     }
 
-    private func handleMotion(_ motion: CMDeviceMotion) async throws {
-        if let startingPose {
-            motion.attitude.multiply(byInverseOf: startingPose)
-        } else {
-            startingPose = motion.attitude
-        }
+    private func handleMotion(_ motion: DeviceMotion) async throws {
         self.motion = motion
         motions.append(motion)
         if motions.count >= windowSize {
@@ -142,7 +134,4 @@ final class DetectingModel {
             motions.removeAll()
         }
     }
-}
-
-extension CMDeviceMotion: @retroactive @unchecked Sendable {
 }

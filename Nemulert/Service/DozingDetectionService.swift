@@ -13,7 +13,7 @@ import UserNotifications
 
 @DependencyClient
 nonisolated struct DozingDetectionService {
-    var predict: @Sendable (_ motions: [CMDeviceMotion]) async throws -> Dozing
+    var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> Dozing
 }
 
 extension DozingDetectionService: DependencyKey {
