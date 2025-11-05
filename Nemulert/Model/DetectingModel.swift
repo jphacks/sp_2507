@@ -96,7 +96,6 @@ final class DetectingModel {
     private func restartMotionUpdateTask() {
         updateMotionTask = Task {
             for try await motion in try await motionService.motionUpdates(queueName: queueName) {
-                Logger.info("Motion update received")
                 try await handleMotion(motion)
             }
         }
