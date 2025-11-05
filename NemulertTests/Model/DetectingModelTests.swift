@@ -154,13 +154,91 @@ struct DetectingModelTests {
         #expect(model.motions == [])
     }
 
-    @Test("1度の居眠りが検知された")
-    @MainActor func testOnDozingDetecting1Time() async throws {
-        // TODO: Implement
+    @Test("居眠りが1度検知された")
+    @MainActor func testOnDozingDetected1Time() async throws {
+        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
+
+        let model = withDependencies {
+            $0.alarmService.requestAuthorization = {
+                .notDetermined
+            }
+            $0.alarmService.getAlarms = {
+                []
+            }
+            $0.dozingDetectionService.predict = { _ in
+                .dozingFront
+            }
+            $0.motionService.connectionUpdates = {
+                AsyncStream { continuation in
+                    continuation.finish()
+                }
+            }
+            $0.motionService.motionUpdates = { _ in
+                motionUpdates
+            }
+            $0.notificationService.requestAuthorization = {
+                false
+            }
+        } operation: {
+            DetectingModel()
+        }
+
+        model.onAppear()
+
+        let motions = Array(repeating: DeviceMotion.stub, count: 150)
+        motions.forEach { motion in
+            motionUpdatesContinuation.yield(motion)
+        }
+        try await Task.sleep(for: .seconds(1))
+        #expect(model.dozing == .dozingFront)
+        #expect(model.dozingCount == 1)
     }
 
-    @Test("2度の居眠りが検知された")
-    @MainActor func testOnDozingDetecting2Times() async throws {
-        // TODO: Implement
+    @Test("居眠りが2度検知された")
+    @MainActor func testOnDozingDetected2Times() async throws {
+        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
+
+        let model = withDependencies {
+            $0.uuid = .incrementing
+            $0.alarmService.requestAuthorization = {
+                .notDetermined
+            }
+            $0.alarmService.getAlarms = {
+                []
+            }
+            $0.alarmService.scheduleAlarm = { _ in
+            }
+            $0.dozingDetectionService.predict = { _ in
+                .dozingFront
+            }
+            $0.motionService.connectionUpdates = {
+                AsyncStream { continuation in
+                    continuation.finish()
+                }
+            }
+            $0.motionService.motionUpdates = { _ in
+                motionUpdates
+            }
+            $0.notificationService.requestAuthorization = {
+                false
+            }
+            $0.notificationService.requestNotification = { _, _, _ in
+            }
+        } operation: {
+            DetectingModel()
+        }
+
+        model.onAppear()
+
+        let motions = Array(repeating: DeviceMotion.stub, count: 150)
+        motions.forEach { motion in
+            motionUpdatesContinuation.yield(motion)
+        }
+        motions.forEach { motion in
+            motionUpdatesContinuation.yield(motion)
+        }
+        try await Task.sleep(for: .seconds(1))
+        #expect(model.dozing == .dozingFront)
+        #expect(model.dozingCount == 0)
     }
 }
