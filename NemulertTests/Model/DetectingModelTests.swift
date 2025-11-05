@@ -45,8 +45,8 @@ struct DetectingModelTests {
         #expect(model.dozingCount == 0)
     }
 
-    @Test("ヘッドフォンが接続された")
-    @MainActor func testOnHeadphoneConnected() async throws {
+    @Test("ヘッドフォンが接続・切断された")
+    @MainActor func testOnHeadphoneConnectedAndDisconnected() async throws {
         let (connectionUpdates, connectionUpdatesContinuation) = AsyncStream<Bool>.makeStream()
 
         let model = withDependencies {
@@ -70,15 +70,17 @@ struct DetectingModelTests {
 
         model.onAppear()
 
-        let isConnected = true
-        connectionUpdatesContinuation.yield(isConnected)
-        try await Task.sleep(for: .seconds(1))
-        #expect(model.isConnected == isConnected)
-    }
+        connectionUpdatesContinuation.yield(true)
 
-    @Test("ヘッドフォンの接続が切断された")
-    @MainActor func testOnHeadphoneDisconnected() async throws {
-        // TODO: Implement
+        try await Task.sleep(for: .seconds(1))
+
+        #expect(model.isConnected == true)
+
+        connectionUpdatesContinuation.yield(false)
+
+        try await Task.sleep(for: .seconds(1))
+
+        #expect(model.isConnected == false)
     }
 
     @Test("1個のモーションデータが検出された")
