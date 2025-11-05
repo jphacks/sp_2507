@@ -48,7 +48,18 @@ extension MotionService: DependencyKey {
 }
 
 nonisolated extension MotionService: TestDependencyKey {
-    static let testValue = MotionService()
+    static let testValue = MotionService(
+        connectionUpdates: {
+            AsyncStream<Bool> { continuation in
+                continuation.finish()
+            }
+        },
+        motionUpdates: { _ in
+            AsyncThrowingStream<DeviceMotion, Error> { continuation in
+                continuation.finish()
+            }
+        }
+    )
 
     static let previewValue = MotionService(
         connectionUpdates: {

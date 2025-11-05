@@ -15,28 +15,7 @@ import Testing
 struct DetectingModelTests {
     @Test("画面が表示された")
     @MainActor func testOnAppear() async throws {
-        let model = withDependencies {
-            $0.alarmService.requestAuthorization = {
-                .notDetermined
-            }
-            $0.alarmService.cancelAllAlarms = {
-            }
-            $0.motionService.connectionUpdates = {
-                AsyncStream { continuation in
-                    continuation.finish()
-                }
-            }
-            $0.motionService.motionUpdates = { _ in
-                AsyncThrowingStream { continuation in
-                    continuation.finish()
-                }
-            }
-            $0.notificationService.requestAuthorization = {
-                false
-            }
-        } operation: {
-            DetectingModel()
-        }
+        let model = DetectingModel()
 
         model.onAppear()
 
@@ -52,21 +31,8 @@ struct DetectingModelTests {
         let (connectionUpdates, connectionUpdatesContinuation) = AsyncStream<Bool>.makeStream()
 
         let model = withDependencies {
-            $0.alarmService.requestAuthorization = {
-                .notDetermined
-            }
-            $0.alarmService.cancelAllAlarms = {
-            }
             $0.motionService.connectionUpdates = {
                 connectionUpdates
-            }
-            $0.motionService.motionUpdates = { _ in
-                AsyncThrowingStream { continuation in
-                    continuation.finish()
-                }
-            }
-            $0.notificationService.requestAuthorization = {
-                false
             }
         } operation: {
             DetectingModel()
@@ -92,24 +58,8 @@ struct DetectingModelTests {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
-            $0.alarmService.requestAuthorization = {
-                .notDetermined
-            }
-            $0.alarmService.cancelAllAlarms = {
-            }
-            $0.alarmService.getAlarms = {
-                []
-            }
-            $0.motionService.connectionUpdates = {
-                AsyncStream { continuation in
-                    continuation.finish()
-                }
-            }
             $0.motionService.motionUpdates = { _ in
                 motionUpdates
-            }
-            $0.notificationService.requestAuthorization = {
-                false
             }
         } operation: {
             DetectingModel()
@@ -128,27 +78,8 @@ struct DetectingModelTests {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
-            $0.alarmService.requestAuthorization = {
-                .notDetermined
-            }
-            $0.alarmService.cancelAllAlarms = {
-            }
-            $0.alarmService.getAlarms = {
-                []
-            }
-            $0.dozingDetectionService.predict = { _ in
-                .idle
-            }
-            $0.motionService.connectionUpdates = {
-                AsyncStream { continuation in
-                    continuation.finish()
-                }
-            }
             $0.motionService.motionUpdates = { _ in
                 motionUpdates
-            }
-            $0.notificationService.requestAuthorization = {
-                false
             }
         } operation: {
             DetectingModel()
@@ -170,27 +101,11 @@ struct DetectingModelTests {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
-            $0.alarmService.requestAuthorization = {
-                .notDetermined
-            }
-            $0.alarmService.cancelAllAlarms = {
-            }
-            $0.alarmService.getAlarms = {
-                []
-            }
             $0.dozingDetectionService.predict = { _ in
                 .dozing
             }
-            $0.motionService.connectionUpdates = {
-                AsyncStream { continuation in
-                    continuation.finish()
-                }
-            }
             $0.motionService.motionUpdates = { _ in
                 motionUpdates
-            }
-            $0.notificationService.requestAuthorization = {
-                false
             }
         } operation: {
             DetectingModel()
@@ -213,31 +128,11 @@ struct DetectingModelTests {
 
         let model = withDependencies {
             $0.uuid = .incrementing
-            $0.alarmService.requestAuthorization = {
-                .notDetermined
-            }
-            $0.alarmService.cancelAllAlarms = {
-            }
-            $0.alarmService.getAlarms = {
-                []
-            }
-            $0.alarmService.scheduleAlarm = { _ in
-            }
             $0.dozingDetectionService.predict = { _ in
                 .dozing
             }
-            $0.motionService.connectionUpdates = {
-                AsyncStream { continuation in
-                    continuation.finish()
-                }
-            }
             $0.motionService.motionUpdates = { _ in
                 motionUpdates
-            }
-            $0.notificationService.requestAuthorization = {
-                false
-            }
-            $0.notificationService.requestNotification = { _, _, _ in
             }
         } operation: {
             DetectingModel()
