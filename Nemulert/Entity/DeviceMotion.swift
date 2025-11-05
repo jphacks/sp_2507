@@ -19,7 +19,7 @@ protocol DeviceMotionProtocol {
     var sensorLocation: CMDeviceMotion.SensorLocation { get }
 }
 
-struct DeviceMotion: DeviceMotionProtocol {
+struct DeviceMotion: DeviceMotionProtocol, Equatable {
     let attitude: Attitude
     let rotationRate: CMRotationRate
     let gravity: CMAcceleration
@@ -55,7 +55,38 @@ struct DeviceMotion: DeviceMotionProtocol {
         self.heading = deviceMotion.heading
         self.sensorLocation = deviceMotion.sensorLocation
     }
+
+    init(deviceMotion: some DeviceMotionProtocol) {
+        self.attitude = Attitude(attitude: deviceMotion.attitude)
+        self.rotationRate = deviceMotion.rotationRate
+        self.gravity = deviceMotion.gravity
+        self.userAcceleration = deviceMotion.userAcceleration
+        self.magneticField = deviceMotion.magneticField
+        self.heading = deviceMotion.heading
+        self.sensorLocation = deviceMotion.sensorLocation
+    }
 }
 
 extension CMDeviceMotion: DeviceMotionProtocol {
+}
+
+extension CMRotationRate: @retroactive Equatable {
+    public static func == (lhs: CMRotationRate, rhs: CMRotationRate) -> Bool {
+        lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
+    }
+}
+
+extension CMAcceleration: @retroactive Equatable {
+    public static func == (lhs: CMAcceleration, rhs: CMAcceleration) -> Bool {
+        lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
+    }
+}
+
+extension CMCalibratedMagneticField: @retroactive Equatable {
+    public static func == (lhs: CMCalibratedMagneticField, rhs: CMCalibratedMagneticField) -> Bool {
+        lhs.field.x == rhs.field.x &&
+        lhs.field.y == rhs.field.y &&
+        lhs.field.z == rhs.field.z &&
+        lhs.accuracy == rhs.accuracy
+    }
 }

@@ -40,7 +40,6 @@ struct DetectingModelTests {
 
         #expect(model.isConnected == false)
         #expect(model.motion == nil)
-        #expect(model.startingPose == nil)
         #expect(model.motions == [])
         #expect(model.dozing == .idle)
         #expect(model.dozingCount == 0)

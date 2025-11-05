@@ -14,7 +14,7 @@ import UserNotifications
 @DependencyClient
 nonisolated struct MotionService {
     var connectionUpdates: @Sendable () throws -> AsyncStream<Bool>
-    var motionUpdates: @Sendable (_ queueName: String) async throws -> AsyncThrowingStream<CMDeviceMotion, Error>
+    var motionUpdates: @Sendable (_ queueName: String) async throws -> AsyncThrowingStream<DeviceMotion, Error>
 }
 
 extension MotionService: DependencyKey {
@@ -27,7 +27,22 @@ extension MotionService: DependencyKey {
             queue.name = queueName
             queue.maxConcurrentOperationCount = 1
             queue.qualityOfService = .background
-            return try HeadphoneMotionUpdate.updates(queue: queue)
+            let updates = try HeadphoneMotionUpdate.updates(queue: queue)
+            return AsyncThrowingStream { continuation in
+                let task = Task {
+                    do {
+                        for try await update in updates {
+                            let motion = await DeviceMotion(deviceMotion: update)
+                            continuation.yield(motion)
+                        }
+                    } catch {
+                        continuation.finish(throwing: error)
+                    }
+                }
+                continuation.onTermination = { _ in
+                    task.cancel()
+                }
+            }
         }
     )
 }
@@ -42,7 +57,7 @@ nonisolated extension MotionService: TestDependencyKey {
             }
         },
         motionUpdates: { _ in
-            AsyncThrowingStream<CMDeviceMotion, Error> { continuation in
+            AsyncThrowingStream<DeviceMotion, Error> { continuation in
                 continuation.finish()
             }
         }
