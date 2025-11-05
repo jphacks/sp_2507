@@ -116,7 +116,42 @@ struct DetectingModelTests {
 
     @Test("150個のモーションデータが検出された")
     @MainActor func testOn150MotionsStreamed() async throws {
-        // TODO: Implement
+        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
+
+        let model = withDependencies {
+            $0.alarmService.requestAuthorization = {
+                .notDetermined
+            }
+            $0.alarmService.getAlarms = {
+                []
+            }
+            $0.dozingDetectionService.predict = { _ in
+                .idle
+            }
+            $0.motionService.connectionUpdates = {
+                AsyncStream { continuation in
+                    continuation.finish()
+                }
+            }
+            $0.motionService.motionUpdates = { _ in
+                motionUpdates
+            }
+            $0.notificationService.requestAuthorization = {
+                false
+            }
+        } operation: {
+            DetectingModel()
+        }
+
+        model.onAppear()
+
+        let motions = Array(repeating: DeviceMotion.stub, count: 150)
+        motions.forEach { motion in
+            motionUpdatesContinuation.yield(motion)
+        }
+        try await Task.sleep(for: .seconds(1))
+        #expect(model.motion == motions.last)
+        #expect(model.motions == [])
     }
 
     @Test("1度の居眠りが検知された")
