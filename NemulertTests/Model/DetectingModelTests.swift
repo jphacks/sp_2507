@@ -166,7 +166,7 @@ struct DetectingModelTests {
                 []
             }
             $0.dozingDetectionService.predict = { _ in
-                .dozingFront
+                .dozing
             }
             $0.motionService.connectionUpdates = {
                 AsyncStream { continuation in
@@ -190,7 +190,7 @@ struct DetectingModelTests {
             motionUpdatesContinuation.yield(motion)
         }
         try await Task.sleep(for: .seconds(1))
-        #expect(model.dozing == .dozingFront)
+        #expect(model.dozing == .dozing)
         #expect(model.dozingCount == 1)
     }
 
@@ -209,7 +209,7 @@ struct DetectingModelTests {
             $0.alarmService.scheduleAlarm = { _ in
             }
             $0.dozingDetectionService.predict = { _ in
-                .dozingFront
+                .dozing
             }
             $0.motionService.connectionUpdates = {
                 AsyncStream { continuation in
@@ -238,7 +238,7 @@ struct DetectingModelTests {
             motionUpdatesContinuation.yield(motion)
         }
         try await Task.sleep(for: .seconds(1))
-        #expect(model.dozing == .dozingFront)
+        #expect(model.dozing == .dozing)
         #expect(model.dozingCount == 0)
     }
 }
