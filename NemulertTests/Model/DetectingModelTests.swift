@@ -19,6 +19,8 @@ struct DetectingModelTests {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
             }
+            $0.alarmService.cancelAllAlarms = {
+            }
             $0.motionService.connectionUpdates = {
                 AsyncStream { continuation in
                     continuation.finish()
@@ -52,6 +54,8 @@ struct DetectingModelTests {
         let model = withDependencies {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
+            }
+            $0.alarmService.cancelAllAlarms = {
             }
             $0.motionService.connectionUpdates = {
                 connectionUpdates
@@ -91,6 +95,11 @@ struct DetectingModelTests {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
             }
+            $0.alarmService.cancelAllAlarms = {
+            }
+            $0.alarmService.getAlarms = {
+                []
+            }
             $0.motionService.connectionUpdates = {
                 AsyncStream { continuation in
                     continuation.finish()
@@ -114,13 +123,15 @@ struct DetectingModelTests {
         #expect(model.motions == [DeviceMotion.stub])
     }
 
-    @Test("150個のモーションデータが検出された")
+    @Test("windowSizeと同数のモーションデータが検出された")
     @MainActor func testOn150MotionsStreamed() async throws {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
+            }
+            $0.alarmService.cancelAllAlarms = {
             }
             $0.alarmService.getAlarms = {
                 []
@@ -145,7 +156,7 @@ struct DetectingModelTests {
 
         model.onAppear()
 
-        let motions = Array(repeating: DeviceMotion.stub, count: 150)
+        let motions = Array(repeating: DeviceMotion.stub, count: model.windowSize)
         motions.forEach { motion in
             motionUpdatesContinuation.yield(motion)
         }
@@ -161,6 +172,8 @@ struct DetectingModelTests {
         let model = withDependencies {
             $0.alarmService.requestAuthorization = {
                 .notDetermined
+            }
+            $0.alarmService.cancelAllAlarms = {
             }
             $0.alarmService.getAlarms = {
                 []
@@ -185,7 +198,7 @@ struct DetectingModelTests {
 
         model.onAppear()
 
-        let motions = Array(repeating: DeviceMotion.stub, count: 150)
+        let motions = Array(repeating: DeviceMotion.stub, count: model.windowSize)
         motions.forEach { motion in
             motionUpdatesContinuation.yield(motion)
         }
@@ -202,6 +215,8 @@ struct DetectingModelTests {
             $0.uuid = .incrementing
             $0.alarmService.requestAuthorization = {
                 .notDetermined
+            }
+            $0.alarmService.cancelAllAlarms = {
             }
             $0.alarmService.getAlarms = {
                 []
@@ -230,7 +245,7 @@ struct DetectingModelTests {
 
         model.onAppear()
 
-        let motions = Array(repeating: DeviceMotion.stub, count: 150)
+        let motions = Array(repeating: DeviceMotion.stub, count: model.windowSize)
         motions.forEach { motion in
             motionUpdatesContinuation.yield(motion)
         }

@@ -23,7 +23,7 @@ final class DetectingModel {
     private(set) var dozingCount: Int = 0
 
     @ObservationIgnored
-    private let windowSize: Int = 130
+    let windowSize: Int = 130
     @ObservationIgnored
     private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
 
@@ -111,17 +111,19 @@ final class DetectingModel {
 
     private func handleMotion(_ motion: DeviceMotion) async throws {
         self.motion = motion
+        if !(try alarmService.getAlarms().isEmpty) {
+            return
+        }
         motions.append(motion)
-        if motions.count >= windowSize {
-            if try alarmService.getAlarms().isEmpty {
-                let motions = Array(motions.prefix(windowSize))
-                dozing = try await dozingDetectionService.predict(motions: motions)
-                Logger.info("Dozing prediction: \(dozing)")
-                if dozing.isDozing {
-                    try await incrementDozingCount()
-                }
-            }
-            motions.removeAll()
+        if motions.count < windowSize {
+            return
+        }
+        let motions = Array(motions.prefix(windowSize))
+        self.motions.removeAll()
+        dozing = try await dozingDetectionService.predict(motions: motions)
+        Logger.info("Dozing prediction: \(dozing)")
+        if dozing.isDozing {
+            try await incrementDozingCount()
         }
     }
 
