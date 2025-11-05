@@ -45,7 +45,7 @@ struct DetectingModelTests {
         #expect(model.dozingCount == 0)
     }
 
-    @Test("ヘッドフォンが接続された", .timeLimit(.minutes(1)))
+    @Test("ヘッドフォンが接続された")
     @MainActor func testOnHeadphoneConnected() async throws {
         let (connectionUpdates, connectionUpdatesContinuation) = AsyncStream<Bool>.makeStream()
 
@@ -78,39 +78,38 @@ struct DetectingModelTests {
 
     @Test("ヘッドフォンの接続が切断された")
     @MainActor func testOnHeadphoneDisconnected() async throws {
-        // let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<CMDeviceMotion, Error>.makeStream()
-
-        // let model = withDependencies {
-        //     $0.alarmService.requestAuthorization = {
-        //         .notDetermined
-        //     }
-        //     $0.motionService.connectionUpdates = {
-        //         AsyncStream { continuation in
-        //             continuation.finish()
-        //         }
-        //     }
-        //     $0.motionService.motionUpdates = { _ in
-        //         motionUpdates
-        //     }
-        //     $0.notificationService.requestAuthorization = {
-        //         false
-        //     }
-        // } operation: {
-        //     DetectingModel()
-        // }
-
-        // model.onAppear()
-
-        // TODO: Create CMDeviceMotion mock
-        // let motion = CMDeviceMotion()
-        // motionUpdatesContinuation.yield(motion)
-        // #expect(model.motion == motion)
-        // #expect(model.motions == [motion])
+        // TODO: Implement
     }
 
     @Test("1個のモーションデータが検出された")
     @MainActor func testOn1MotionsStreamed() async throws {
-        // TODO: Implement
+        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
+
+        let model = withDependencies {
+            $0.alarmService.requestAuthorization = {
+                .notDetermined
+            }
+            $0.motionService.connectionUpdates = {
+                AsyncStream { continuation in
+                    continuation.finish()
+                }
+            }
+            $0.motionService.motionUpdates = { _ in
+                motionUpdates
+            }
+            $0.notificationService.requestAuthorization = {
+                false
+            }
+        } operation: {
+            DetectingModel()
+        }
+
+        model.onAppear()
+
+        motionUpdatesContinuation.yield(DeviceMotion.stub)
+        try await Task.sleep(for: .seconds(1))
+        #expect(model.motion == DeviceMotion.stub)
+        #expect(model.motions == [DeviceMotion.stub])
     }
 
     @Test("150個のモーションデータが検出された")

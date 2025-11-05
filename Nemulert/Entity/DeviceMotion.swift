@@ -67,6 +67,21 @@ struct DeviceMotion: DeviceMotionProtocol, Equatable {
     }
 }
 
+extension DeviceMotion {
+    static let stub = DeviceMotion(
+        attitude: .stub,
+        rotationRate: CMRotationRate(x: 0, y: 0, z: 0),
+        gravity: CMAcceleration(x: 0, y: 0, z: 0),
+        userAcceleration: CMAcceleration(x: 0, y: 0, z: 0),
+        magneticField: CMCalibratedMagneticField(
+            field: CMMagneticField(x: 0, y: 0, z: 0),
+            accuracy: CMMagneticFieldCalibrationAccuracy.uncalibrated
+        ),
+        heading: 0,
+        sensorLocation: CMDeviceMotion.SensorLocation.default
+    )
+}
+
 extension CMDeviceMotion: DeviceMotionProtocol {
 }
 

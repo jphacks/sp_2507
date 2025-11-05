@@ -53,6 +53,26 @@ struct Attitude: AttitudeProtocol, Equatable {
     }
 }
 
+extension Attitude {
+    static let stub = Attitude(
+        roll: 0,
+        pitch: 0,
+        yaw: 0,
+        rotationMatrix: CMRotationMatrix(
+            m11: 0,
+            m12: 0,
+            m13: 0,
+            m21: 0,
+            m22: 0,
+            m23: 0,
+            m31: 0,
+            m32: 0,
+            m33: 0
+        ),
+        quaternion: CMQuaternion(x: 0, y: 0, z: 0, w: 0)
+    )
+}
+
 extension CMAttitude: AttitudeProtocol {
 }
 
