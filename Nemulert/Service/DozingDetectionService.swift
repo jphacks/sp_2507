@@ -28,7 +28,6 @@ extension DozingDetectionService: DependencyKey {
             )
             let output = try await model.prediction(input: input)
             let label = await output.label
-            print("\(label) detected.")
             return Dozing(rawValue: label) ?? .idle
         }
     )
