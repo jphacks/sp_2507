@@ -118,19 +118,23 @@ final class DetectingModel {
                 dozing = try await dozingDetectionService.predict(motions: motions)
                 Logger.info("Dozing prediction: \(dozing)")
                 if dozing.isDozing {
-                    dozingCount += 1
-                }
-                if self.dozingCount >= 2 {
-                    _ = try await alarmService.scheduleAlarm(id: uuid())
-                    _ = try await notificationService.requestNotification(
-                        title: String(localized: "Are you dozing off?"),
-                        body: String(localized: "Tap to continue working!"),
-                        categoryIdentifier: "dozing"
-                    )
-                    dozingCount = 0
+                    try await incrementDozingCount()
                 }
             }
             motions.removeAll()
+        }
+    }
+
+    private func incrementDozingCount() async throws {
+        dozingCount += 1
+        if self.dozingCount >= 2 {
+            _ = try await alarmService.scheduleAlarm(id: uuid())
+            _ = try await notificationService.requestNotification(
+                title: String(localized: "Are you dozing off?"),
+                body: String(localized: "Tap to continue working!"),
+                categoryIdentifier: "dozing"
+            )
+            dozingCount = 0
         }
     }
 }
