@@ -124,7 +124,7 @@ struct DetectingModelTests {
     }
 
     @Test("windowSizeと同数のモーションデータが検出された")
-    @MainActor func testOn150MotionsStreamed() async throws {
+    @MainActor func testOnWindowSizeMotionsStreamed() async throws {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
