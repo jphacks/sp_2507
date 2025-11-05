@@ -23,7 +23,7 @@ final class DetectingModel {
     private(set) var dozingCount: Int = 0
 
     @ObservationIgnored
-    private let windowSize: Int = 150
+    private let windowSize: Int = 130
     @ObservationIgnored
     private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
 
