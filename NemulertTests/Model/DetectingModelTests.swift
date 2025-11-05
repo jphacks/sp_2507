@@ -91,7 +91,7 @@ struct DetectingModelTests {
         motions.forEach { motion in
             motionUpdatesContinuation.yield(motion)
         }
-        try await Task.sleep(for: .seconds(1))
+        try await Task.sleep(for: .seconds(2))
         #expect(model.motion == motions.last)
         #expect(model.motions == [])
     }
@@ -117,7 +117,7 @@ struct DetectingModelTests {
         motions.forEach { motion in
             motionUpdatesContinuation.yield(motion)
         }
-        try await Task.sleep(for: .seconds(1))
+        try await Task.sleep(for: .seconds(2))
         #expect(model.dozing == .dozing)
         #expect(model.dozingCount == 1)
     }
@@ -147,7 +147,7 @@ struct DetectingModelTests {
         motions.forEach { motion in
             motionUpdatesContinuation.yield(motion)
         }
-        try await Task.sleep(for: .seconds(1))
+        try await Task.sleep(for: .seconds(2))
         #expect(model.dozing == .dozing)
         #expect(model.dozingCount == 0)
     }

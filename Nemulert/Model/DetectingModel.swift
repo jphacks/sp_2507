@@ -86,17 +86,27 @@ final class DetectingModel {
         dozing = .idle
         dozingCount = 0
         updateConnectionTask = Task {
-            for await isConnected in try motionService.connectionUpdates() {
-                Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
-                try handleConnection(isConnected)
+            do {
+                for await isConnected in try motionService.connectionUpdates() {
+                    Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
+                    try handleConnection(isConnected)
+                }
+            } catch {
+                Logger.error(error)
+                throw error
             }
         }
     }
 
     private func restartMotionUpdateTask() {
         updateMotionTask = Task {
-            for try await motion in try await motionService.motionUpdates(queueName: queueName) {
-                try await handleMotion(motion)
+            do {
+                for try await motion in try await motionService.motionUpdates(queueName: queueName) {
+                    try await handleMotion(motion)
+                }
+            } catch {
+                Logger.error(error)
+                throw error
             }
         }
     }
