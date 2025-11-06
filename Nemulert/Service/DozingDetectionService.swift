@@ -20,6 +20,7 @@ extension DozingDetectionService: DependencyKey {
     static let liveValue = DozingDetectionService(
         predict: { motions in
             let configuration = MLModelConfiguration()
+            configuration.computeUnits = .cpuAndGPU
             let model = try await DozingDetection(configuration: configuration)
             let input = await DozingDetectionInput(
                 rotation_rate_x: try MLMultiArray(motions.map { $0.rotationRate.x }),
