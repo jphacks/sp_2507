@@ -121,11 +121,11 @@ final class DetectingModel {
 
     private func handleMotion(_ motion: DeviceMotion) async throws {
         self.motion = motion
-        if !(try alarmService.getAlarms().isEmpty) {
+        guard try alarmService.getAlarms().isEmpty else {
             return
         }
         motions.append(motion)
-        if motions.count < windowSize {
+        guard motions.count >= windowSize else {
             return
         }
         let motions = Array(motions.prefix(windowSize))
