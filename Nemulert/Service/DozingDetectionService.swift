@@ -9,7 +9,12 @@ import CoreML
 import CoreMotion
 import Dependencies
 import DependenciesMacros
+import Foundation
 import UserNotifications
+
+enum DozingDetectionServiceError: Error {
+    case modelResourceMissing
+}
 
 @DependencyClient
 nonisolated struct DozingDetectionService {
@@ -20,26 +25,33 @@ extension DozingDetectionService: DependencyKey {
     static let liveValue = DozingDetectionService(
         predict: { motions in
             let configuration = MLModelConfiguration()
-            let model = try await DozingDetection(configuration: configuration)
-            let input = await DozingDetectionInput(
-                attitude_pitch: try MLMultiArray(motions.map { $0.attitude.pitch }),
-                attitude_roll: try MLMultiArray(motions.map { $0.attitude.roll }),
-                attitude_yaw: try MLMultiArray(motions.map { $0.attitude.yaw }),
-                rotation_rate_x: try MLMultiArray(motions.map { $0.rotationRate.x }),
-                rotation_rate_y: try MLMultiArray(motions.map { $0.rotationRate.y }),
-                rotation_rate_z: try MLMultiArray(motions.map { $0.rotationRate.z }),
-                stateIn: try MLMultiArray(shape: [400], dataType: .double)
+            guard let modelURL = Bundle.main.url(forResource: "DozingDetection", withExtension: "mlmodelc") else {
+                throw DozingDetectionServiceError.modelResourceMissing
+            }
+            let model = try MLModel(contentsOf: modelURL, configuration: configuration)
+            let rotationRateX = try MLMultiArray(motions.map { $0.rotationRate.x })
+            let rotationRateY = try MLMultiArray(motions.map { $0.rotationRate.y })
+            let stateIn = try MLMultiArray(shape: [400], dataType: .double)
+            let input = try MLDictionaryFeatureProvider(
+                dictionary: [
+                    "rotation_rate_x": MLFeatureValue(multiArray: rotationRateX),
+                    "rotation_rate_y": MLFeatureValue(multiArray: rotationRateY),
+                    "stateIn": MLFeatureValue(multiArray: stateIn)
+                ]
             )
-            let output = try await model.prediction(input: input)
-            let label = await output.label
-            print("\(label) detected.")
+            let prediction = try model.prediction(from: input)
+            let label = prediction.featureValue(for: "label")?.stringValue ?? Dozing.idle.rawValue
             return Dozing(rawValue: label) ?? .idle
         }
     )
 }
 
 nonisolated extension DozingDetectionService: TestDependencyKey {
-    static let testValue = DozingDetectionService()
+    static let testValue = DozingDetectionService(
+        predict: { _ in
+            .idle
+        }
+    )
 
     static let previewValue = DozingDetectionService(
         predict: { _ in

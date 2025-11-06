@@ -23,7 +23,7 @@ final class DetectingModel {
     private(set) var dozingCount: Int = 0
 
     @ObservationIgnored
-    private let windowSize: Int = 150
+    let windowSize: Int = 130
     @ObservationIgnored
     private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
 
@@ -86,18 +86,27 @@ final class DetectingModel {
         dozing = .idle
         dozingCount = 0
         updateConnectionTask = Task {
-            for await isConnected in try motionService.connectionUpdates() {
-                Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
-                try handleConnection(isConnected)
+            do {
+                for await isConnected in try motionService.connectionUpdates() {
+                    Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
+                    try handleConnection(isConnected)
+                }
+            } catch {
+                Logger.error(error)
+                throw error
             }
         }
     }
 
     private func restartMotionUpdateTask() {
         updateMotionTask = Task {
-            for try await motion in try await motionService.motionUpdates(queueName: queueName) {
-                Logger.info("Motion update received")
-                try await handleMotion(motion)
+            do {
+                for try await motion in try await motionService.motionUpdates(queueName: queueName) {
+                    try await handleMotion(motion)
+                }
+            } catch {
+                Logger.error(error)
+                throw error
             }
         }
     }
@@ -112,26 +121,32 @@ final class DetectingModel {
 
     private func handleMotion(_ motion: DeviceMotion) async throws {
         self.motion = motion
+        guard try alarmService.getAlarms().isEmpty else {
+            return
+        }
         motions.append(motion)
-        if motions.count >= windowSize {
-            if try alarmService.getAlarms().isEmpty {
-                let motions = Array(motions.prefix(windowSize))
-                dozing = try await dozingDetectionService.predict(motions: motions)
-                Logger.info("Dozing prediction: \(dozing)")
-                if dozing.isDozing {
-                    dozingCount += 1
-                }
-                if self.dozingCount >= 2 {
-                    _ = try await alarmService.scheduleAlarm(id: uuid())
-                    _ = try await notificationService.requestNotification(
-                        title: String(localized: "Are you dozing off?"),
-                        body: String(localized: "Tap to continue working!"),
-                        categoryIdentifier: "dozing"
-                    )
-                    dozingCount = 0
-                }
-            }
-            motions.removeAll()
+        guard motions.count >= windowSize else {
+            return
+        }
+        let motions = Array(motions.prefix(windowSize))
+        self.motions.removeAll()
+        dozing = try await dozingDetectionService.predict(motions: motions)
+        Logger.info("Dozing prediction: \(dozing)")
+        if dozing.isDozing {
+            try await incrementDozingCount()
+        }
+    }
+
+    private func incrementDozingCount() async throws {
+        dozingCount += 1
+        if self.dozingCount >= 2 {
+            _ = try await alarmService.scheduleAlarm(id: uuid())
+            _ = try await notificationService.requestNotification(
+                title: String(localized: "Are you dozing off?"),
+                body: String(localized: "Tap to continue working!"),
+                categoryIdentifier: "dozing"
+            )
+            dozingCount = 0
         }
     }
 }

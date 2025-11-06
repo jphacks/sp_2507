@@ -74,7 +74,18 @@ extension AlarmService: DependencyKey {
 }
 
 nonisolated extension AlarmService: TestDependencyKey {
-    static let testValue = AlarmService()
+    static let testValue = AlarmService(
+        requestAuthorization: {
+            .notDetermined
+        },
+        getAlarms: {
+            []
+        },
+        scheduleAlarm: { _ in
+        },
+        cancelAllAlarms: {
+        }
+    )
 
     static let previewValue = AlarmService(
         requestAuthorization: {

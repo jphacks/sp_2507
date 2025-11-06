@@ -45,11 +45,17 @@ extension NotificationService: DependencyKey {
 }
 
 nonisolated extension NotificationService: TestDependencyKey {
-    static let testValue = NotificationService()
+    static let testValue = NotificationService(
+        requestAuthorization: {
+            false
+        },
+        requestNotification: { _, _, _ in
+        }
+    )
 
     static let previewValue = NotificationService(
         requestAuthorization: {
-            true
+            false
         },
         requestNotification: { _, _, _ in
         }

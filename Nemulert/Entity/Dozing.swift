@@ -9,16 +9,13 @@ import Foundation
 
 enum Dozing: String {
     case idle
-    case dozingFront = "dozing_front"
-    case dozingBack = "dozing_back"
-    case dozingLeft = "dozing_left"
-    case dozingRight = "dozing_right"
+    case dozing
 
     var isDozing: Bool {
         switch self {
         case .idle:
             return false
-        case .dozingFront, .dozingBack, .dozingLeft, .dozingRight:
+        case .dozing:
             return true
         }
     }
