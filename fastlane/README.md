@@ -63,30 +63,6 @@ Fetch Ad Hoc
 
 Fetch App Store
 
-### ios match_delete_development
-
-```sh
-[bundle exec] fastlane ios match_delete_development
-```
-
-Delete Development
-
-### ios match_delete_adhoc
-
-```sh
-[bundle exec] fastlane ios match_delete_adhoc
-```
-
-Delete Ad Hoc
-
-### ios match_delete_appstore
-
-```sh
-[bundle exec] fastlane ios match_delete_appstore
-```
-
-Delete App Store
-
 ### ios register_a_new_device
 
 ```sh
