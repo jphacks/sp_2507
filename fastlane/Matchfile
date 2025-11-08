@@ -1,4 +1,4 @@
-git_url("git@github.com:kantacky/nemulert-ios-certificates.git")
+git_url("git@github.com:kantacky/apple-certificates.git")
 storage_mode("git")
 app_identifier(["com.kantacky.Nemulert", "com.kantacky.Nemulert.NemulertWidget"])
 username("iam@kantacky.com")

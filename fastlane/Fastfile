@@ -60,30 +60,6 @@ platform :ios do
     )
   end
 
-  desc "Delete Development"
-  lane :match_delete_development do
-    match_nuke(
-      type: "development",
-      api_key: get_app_store_connect_api_key,
-    )
-  end
-
-  desc "Delete Ad Hoc"
-  lane :match_delete_adhoc do
-    match_nuke(
-      type: "adhoc",
-      api_key: get_app_store_connect_api_key,
-    )
-  end
-
-  desc "Delete App Store"
-  lane :match_delete_appstore do
-    match_nuke(
-      type: "appstore",
-      api_key: get_app_store_connect_api_key,
-    )
-  end
-
   desc "Register a new device"
   lane :register_a_new_device do
     register_device(
