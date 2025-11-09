@@ -10,7 +10,7 @@
 
 ### デモ動画
 
-[![thumbnail]()](https://youtu.be/i4O_GeJBzXE)
+[![thumbnail](https://github.com/user-attachments/assets/1a7ab6db-e380-49b0-8c3e-98651abb2430)](https://youtu.be/i4O_GeJBzXE)
 
 ### 背景 (製品開発のきっかけ、課題等)
 
@@ -77,26 +77,26 @@ AirPods を装着し、音楽を聴きながら作業をすることが多いは
 
 ## 発表資料
 
-![slide_01]()
+![slide_01](https://github.com/user-attachments/assets/1a7ab6db-e380-49b0-8c3e-98651abb2430)
 
-![slide_02]()
+![slide_02](https://github.com/user-attachments/assets/ff3fa7ae-cb34-4b68-b4ad-ae7f624e4576)
 
-![slide_03]()
+![slide_03](https://github.com/user-attachments/assets/74d9277c-9681-44a8-8831-74dcf89320be)
 
-![slide_04]()
+![slide_04](https://github.com/user-attachments/assets/cf442d26-90a8-42d7-a3f9-7248898fb710)
 
-![slide_05]()
+![slide_05](https://github.com/user-attachments/assets/81057e05-cfc8-435a-911f-7d2addad5097)
 
-![slide_06]()
+![slide_06](https://github.com/user-attachments/assets/9356e111-2b22-4395-9ff4-6a420566e508)
 
-![slide_07]()
+![slide_07](https://github.com/user-attachments/assets/16800c17-be3d-499f-87c4-f828e1f80153)
 
-![slide_08]()
+![slide_08](https://github.com/user-attachments/assets/f3e09122-61c2-4ef4-a4bd-d644b83fd69c)
 
-![slide_09]()
+![slide_09](https://github.com/user-attachments/assets/29c25430-2936-4352-ab25-d0ceb05b5a03)
 
-![slide_10]()
+![slide_10](https://github.com/user-attachments/assets/66552bd2-f42a-4b11-a524-36a358089be4)
 
-![slide_11]()
+![slide_11](https://github.com/user-attachments/assets/098baec8-ff02-4a03-b3d3-99bc0e86677f)
 
-![slide_12]()
+![slide_12](https://github.com/user-attachments/assets/be5110d8-cd0c-427e-8f8a-ae70983428a6)
