@@ -1,0 +1,52 @@
+version: 1
+rules:
+  - expected: ActivityKit
+    specs:
+  - expected: AirPods
+    specs:
+      - from: Air Pods
+        to: AirPods
+      - from: airpods
+        to: AirPods
+      - from: air pods
+        to: AirPods
+      - from: AirPod
+        to: AirPods
+      - from: Air Pod
+        to: AirPods
+      - from: airpod
+        to: AirPods
+      - from: air pod
+        to: AirPods
+  - expected: AlarmKit
+    specs:
+  - expected: App Intents
+    specs:
+  - expected: Core ML
+    specs:
+      - from: CoreML
+        to: Core ML
+      - from: coreml
+        to: Core ML
+      - from: core ml
+        to: Core ML
+  - expected: Core Motion
+    specs:
+      - from: CoreMotion
+        to: Core Motion
+      - from: coremotion
+        to: Core Motion
+      - from: core motion
+        to: Core Motion
+  - expected: SwiftUI
+    specs:
+      - from: Swift UI
+        to: SwiftUI
+      - from: swiftui
+        to: SwiftUI
+      - from: swift UI
+        to: SwiftUI
+      - from: swift ui
+        to: SwiftUI
+  - expected: WidgetKit
+    specs:

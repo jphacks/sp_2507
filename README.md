@@ -6,95 +6,56 @@
 
 ## 製品概要
 
+うとうと x Tech：もう、うとうとで後悔しない！うとうとで鳴るアラームアプリ
+
 ### デモ動画
 
-[![thumbnail](https://github.com/user-attachments/assets/7f711d98-df43-4089-88fc-7636e6d86f01)](https://drive.google.com/file/d/1-69KKNDsiDJYcyj7FD5vImPnY_oJaMIT/preview)
+[![thumbnail](https://github.com/user-attachments/assets/1a7ab6db-e380-49b0-8c3e-98651abb2430)](https://youtu.be/i4O_GeJBzXE)
 
 ### 背景 (製品開発のきっかけ、課題等)
 
-誰しもが、レポートや試験勉強で夜遅くまで作業していて、気づいたら寝落ちをしていた。その結果、翌朝に「しまった」と後悔した経験があるのではないでしょうか。
+誰しもが、作業中に寝落ちしてしまい、後悔した経験があるのではないでしょうか。
+私たちは、この問題に着目しました。さらに、寝落ちは主に次の二つに分けられると考えました。
 
-私たちは、この「寝落ちをしたくない」というニーズに着目しました。 しかし、既存のアラームでは、このような予期せぬ寝落ちを防ぐことはできません。これらの問題を解決すべく、『寝落ち防止』×『Tech』をテーマに、 夜遅くまで頑張る人をターゲットとした**うとうと**で鳴らすアラームアプリ"Nemulert"を開発しました。
+1. 寝ようと思って寝落ちする場合: ベッドに寝転びながらスマホをいじって眠ってしまう
+2. うとうとして寝落ちしてしまう場合: 夜にデスクで作業をしているときに眠ってしまう
+
+このうち、私たちは 2. うとうとして寝落ちしてしまう場合 が特に問題であると考えました。
 
 ### 製品説明（具体的な製品の説明）
 
-"Nemulte"は、AirPods で頭の傾きや動作から、ユーザーのうとうとを検知して起こす、新しいアラームアプリです。
-従来の**時間**で鳴るアラームとは異なり、作業中や勉強中の**意図しない寝落ち**を防ぎます。ユーザーが深い眠りに入る直前にアラームを作動させ、起こすことができます。
-これらの「寝落ち防止機能」を、夜遅くまで頑張る学生や社会人をターゲットとして提供することで、**寝落ちによる後悔**から解放する、新しい「アラーム体験」を提供します。
+“Nemulert”は、AirPods で頭の傾きや動作から、作業中のユーザーのうとうとを検知して起こすアプリです。
 
 ### 特長 (独自機能)
 
-#### 1. AirPods を使用した「うとうと」の検知
+iOS に溶け込む UI/UX を追求し、普段のルーティーンを邪魔せずにうとうとを検知します。
 
-普段使用している AirPods のセンサーを利用し、頭の傾きや動作を検知して「うとうと」を自動で検知します。既存のサービスである居眠り運転検知技術では、カメラで「まぶたの開閉」や「顔の向き」を監視する方法が主流でした。しかし、この方法には「常に撮影されるプライバシーの懸念」「照明など環境に左右されやすい精度」「カメラの前でしか使えない」といった課題がありました。
-そこで Nemuleart は、これらの課題を解決するために AirPods のモーションセンサーに着目。AirPods を装着するだけで、アプリが頭の傾きや動作をもとに「うとうと」を検知します。カメラを一切使わないため、どんな環境でもうとうとの検知を実現しています。
+#### 1. ショートカット経由で起動
 
-#### 2. シンプルな操作性
+Nemulert の起動を普段のルーティーンに組み込むことが出来ます。ショートカットの他、　 Control Widget から起動することも可能です。
 
-App Intents や ActivityKit、WidgetKit など、iOS の機能をフル活用して、ユーザー体験の親和性を高めました。さらに、WWDC25 で発表された、AlarmKit を活用し、システムと同じインターフェースを持つアラームを実装しました。
+#### 2. AirPods でうとうとを検知
 
-![launch](https://github.com/user-attachments/assets/03cf067e-e1ce-4b8a-915f-48cc3182a0a6)
+AirPods を装着し、音楽を聴きながら作業をすることが多いはずです。その AirPods を使って頭の動きを計測し、うとうとを検知します。
 
-#### 3. 「作業」か「睡眠」かを自分で決められる
+#### 3. 自動でアラームセット
 
-アラームが鳴ることで、ユーザーは「意図せず寝てしまった」状態から、「意識的に行動を選択できる」状態になります。アラームをきっかけに、作業か睡眠を自分の意思で選択できるため、朝起きた時の「寝落ちによる後悔」から解放されます。
-
-#### 4. 深い眠りを防ぐ「段階的アラーム」機能
-
-うとうとを検知しても、すぐに大音量のアラームは鳴りません。まず 1 分間のタイマーが作動しユーザーに通知することで、「うとうとしそうだ」という状態を知らせます。タイマーが終了した時点でアラームが鳴るため、確実に「うとうと」の瞬間だけを捉えて起こします。
-
-<video src="https://github.com/user-attachments/assets/1906ebfa-4e38-4833-b0b3-63dea68bf4a5" controls="true"></video>
-
-#### 5. 夜に勉強や作業をするという特定のシーンに最適化
-
-Nemulert は「夜の作業中に寝落ちしたくない人」をメインターゲットにしたアラームです。
-夜の作業は、眠気と戦いながら無理をしてしまう時間帯。このアプリ は AirPods で"うとうと"を検知し、深い眠りに入る前に知らせることで、うとうとを防ぎながら、作業を続けるサポートをします。
+うとうとが検知されると、1 分後に鳴るアラームがセットされます。うとうとが検知されてから 1 分後までにアラームが解除されなかった場合、時計アプリ内アラームと同様のアラームが作動します。
 
 ### 解決出来ること
 
-従来のアラームに比べて、このアプリでは、「予期せぬ寝落ち」を防ぐことができます。AirPods だけで動作するため、いつでもどこでも手軽に利用できる点も大きな特長です。
-AirPods のようなウェアラブルデバイスが普及した現代において、これまで諦めるしかなかった「寝落ちによる後悔」という課題を解決する新しいアプローチを提供します。よりスマートに自己管理ができる新しい方法を実現します。
-
-### 今後の展望（Kaizen Sprint で取り組みたいこと）
-
-- 「うとうと」判定の精度を高める
-- リリースし、その体験が本当に求められているものなのかを、ユーザーからのフィードバックをもと議論・検証し、改善する
+うとうとをリアルタイムに検知し、ユーザーに通知することで、ユーザーが深い眠りにつく前にうとうとを自覚し、作業を続けるか熟睡するかを自分で選択し、生産的な時間を過ごすことが出来ます。
 
 ### 注力したこと（こだわり等）
 
-- うとうとを検知する機械学習モデルを作成して使用した
-  - うとうとしている状態のモーションデータを収集して[データセット](https://drive.google.com/drive/folders/1x7ndmbMEWY1sk1YKtUmxFMWGLxShspKE?usp=sharing) (100 件以上) を作成した
-  - GPT-5 を使用してデータセットの特徴量を分析した
-  - データセットと Create ML アプリを使用して Core ML モデルを作成した
-  - モデルを Swift から使用した
-- デザインのこだわり
-  - アニメーション
-  - UI や操作/アクションを必要最低限にした
-    - 1 画面で完結する UI
-    - ユーザーの学習性や利便性の向上
-    - <video src="https://github.com/user-attachments/assets/c5a2d630-c68a-4d86-b2a6-054727d80426" controls="true"></video>
-  - アイコン
-    - <img width="320" height="320" alt="Nemulert-iOS-Default-1024x1024@1x" src="https://github.com/user-attachments/assets/8a9127d5-d2d7-42cb-aab6-5981867e81d6" />
-    - Icon Composer を使用して Liquid Glass に対応
-    - アラートでびっくりして目覚めたことを「!」で表現した
-    - 「!」の下の部分は AirPods を表現した
-- UX
-  - アプリ起動
-    - 検知開始
-  - 居眠り検知
-  - アラームのカウントダウン開始
-    - 起きていた場合: 1 分以内にそのタイマーを止める
-    - 起きていない場合: アラームが鳴る
-- MVP
-  - モーションデータを取得
-  - 居眠り検知
-  - AlarmKit
-  - Live Activity
-  - App Intent で起動 (App Shortcut 経由)
-  - 居眠り疑いでプッシュ通知
-    - アラームが起動したことを通知
-  - プッシュ通知に応答
-    - アラーム解除
+- Core Motion を使用して AirPods のモーションデータを取得し、頭の動きを計測
+  - これを用いてうとうとを検知している
+- Create ML アプリで Core ML モデルの構築
+  - 合計 300 件のデータを収集し、機械学習をモデルを構築
+  - 構築したモデルをプロダクトに取り込む
+- UX 追求のための Apple が提供する API の複数利用
+  - iOS 26 から使える AlarmKit を使用して、時計アプリと同様のアラームをセットしている
+  - ユーザーの日々のワークフローに組み込めるように、App Intent を実装し、ショートカットや Control Widget から起動できる
 
 ## 開発技術
 
@@ -116,10 +77,26 @@ AirPods のようなウェアラブルデバイスが普及した現代におい
 
 ## 発表資料
 
-![発表資料_0](https://github.com/user-attachments/assets/fb3acf34-4d5c-4e4b-8f74-70237ad37e0a)
+![slide_01](https://github.com/user-attachments/assets/1a7ab6db-e380-49b0-8c3e-98651abb2430)
 
-![発表資料_2](https://github.com/user-attachments/assets/1974ef44-5f7c-4e9c-b50e-88bbc80081e9)
+![slide_02](https://github.com/user-attachments/assets/ff3fa7ae-cb34-4b68-b4ad-ae7f624e4576)
 
-![発表資料_3](https://github.com/user-attachments/assets/27798470-12ca-4411-a0cd-98cd586d6fc3)
+![slide_03](https://github.com/user-attachments/assets/74d9277c-9681-44a8-8831-74dcf89320be)
 
-![発表資料_4](https://github.com/user-attachments/assets/4dda2079-7ddd-478f-9ab2-8f03430014cd)
+![slide_04](https://github.com/user-attachments/assets/cf442d26-90a8-42d7-a3f9-7248898fb710)
+
+![slide_05](https://github.com/user-attachments/assets/81057e05-cfc8-435a-911f-7d2addad5097)
+
+![slide_06](https://github.com/user-attachments/assets/9356e111-2b22-4395-9ff4-6a420566e508)
+
+![slide_07](https://github.com/user-attachments/assets/16800c17-be3d-499f-87c4-f828e1f80153)
+
+![slide_08](https://github.com/user-attachments/assets/f3e09122-61c2-4ef4-a4bd-d644b83fd69c)
+
+![slide_09](https://github.com/user-attachments/assets/29c25430-2936-4352-ab25-d0ceb05b5a03)
+
+![slide_10](https://github.com/user-attachments/assets/66552bd2-f42a-4b11-a524-36a358089be4)
+
+![slide_11](https://github.com/user-attachments/assets/098baec8-ff02-4a03-b3d3-99bc0e86677f)
+
+![slide_12](https://github.com/user-attachments/assets/be5110d8-cd0c-427e-8f8a-ae70983428a6)
