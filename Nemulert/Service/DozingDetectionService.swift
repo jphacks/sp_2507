@@ -16,9 +16,14 @@ enum DozingDetectionServiceError: Error {
     case modelResourceMissing
 }
 
+struct DozingResult {
+    let dozing: Dozing
+    let confidence: Double
+}
+
 @DependencyClient
 nonisolated struct DozingDetectionService {
-    var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> Dozing
+    var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> DozingResult
 }
 
 extension DozingDetectionService: DependencyKey {
@@ -39,9 +44,18 @@ extension DozingDetectionService: DependencyKey {
                     "stateIn": MLFeatureValue(multiArray: stateIn)
                 ]
             )
+            // ここで予測結果をゲット
             let prediction = try model.prediction(from: input)
+            // ここで予測結果のラベルをゲット
             let label = prediction.featureValue(for: "label")?.stringValue ?? Dozing.idle.rawValue
-            return Dozing(rawValue: label) ?? .idle
+            // ここに確信度をゲットできるようにしたらいいのでは？
+            let prob = prediction.featureValue(for: "labelProbability")?.dictionaryValue as? [String: Double] ?? [:]
+            let probability = prob[label] ?? 0.0
+            print("Probaility: \(probability)")
+            return DozingResult(
+                        dozing: Dozing(rawValue: label) ?? .idle,
+                        confidence: probability
+                     )
         }
     )
 }
@@ -49,13 +63,13 @@ extension DozingDetectionService: DependencyKey {
 nonisolated extension DozingDetectionService: TestDependencyKey {
     static let testValue = DozingDetectionService(
         predict: { _ in
-            .idle
+            DozingResult(dozing: .idle, confidence: 0.0)
         }
     )
 
     static let previewValue = DozingDetectionService(
         predict: { _ in
-            .idle
+            DozingResult(dozing: .idle, confidence: 0.0)
         }
     )
 }
