@@ -44,11 +44,8 @@ extension DozingDetectionService: DependencyKey {
                     "stateIn": MLFeatureValue(multiArray: stateIn)
                 ]
             )
-            // ここで予測結果をゲット
             let prediction = try model.prediction(from: input)
-            // ここで予測結果のラベルをゲット
             let label = prediction.featureValue(for: "label")?.stringValue ?? Dozing.idle.rawValue
-            // ここに確信度をゲットできるようにしたらいいのでは？
             let prob = prediction.featureValue(for: "labelProbability")?.dictionaryValue as? [String: Double] ?? [:]
             let probability = prob[label] ?? 0.0
             print("Probaility: \(probability)")
