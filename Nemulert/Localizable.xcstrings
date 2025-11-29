@@ -1,17 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ (%@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ (%2$@)"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "Are you dozing off?" : {
       "localizations" : {
         "ja" : {
@@ -62,12 +51,6 @@
         }
       }
     },
-    "Debug" : {
-      "shouldTranslate" : false
-    },
-    "Nemulert" : {
-      "shouldTranslate" : false
-    },
     "Open App" : {
       "localizations" : {
         "ja" : {
@@ -78,32 +61,12 @@
         }
       }
     },
-    "Settings" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定"
-          }
-        }
-      }
-    },
     "Tap to continue working!" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "タップして作業を続ける！"
-          }
-        }
-      }
-    },
-    "Version" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "バージョン"
           }
         }
       }
