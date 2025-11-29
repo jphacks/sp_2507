@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingScreen: View {
+    @State private var isDebugScreenPresented = false
+
     var body: some View {
         NavigationStack {
             List {
@@ -27,8 +29,16 @@ struct SettingScreen: View {
                         Text("Version")
                     }
                 }
+                .onTapGesture {
+#if DEBUG
+                    isDebugScreenPresented = true
+#endif
+                }
             }
             .navigationTitle("Settings")
+        }
+        .sheet(isPresented: $isDebugScreenPresented) {
+            DebugScreen()
         }
     }
 }
