@@ -39,11 +39,11 @@ extension DozingDetectionService: DependencyKey {
                     "stateIn": MLFeatureValue(multiArray: stateIn)
                 ]
             )
-            let prediction = try model.prediction(from: input)
+            let prediction = try await model.prediction(from: input)
             let label = prediction.featureValue(for: "label")?.stringValue ?? Dozing.idle.rawValue
-            let prob = prediction.featureValue(for: "labelProbability")?.dictionaryValue as? [String: Double] ?? [:]
-            let probability = prob[label] ?? 0.0
-            print("Probaility: \(probability)")
+            let probabilityDict = prediction.featureValue(for: "labelProbability")?.dictionaryValue as? [String: Double] ?? [:]
+            let probability = probabilityDict[label] ?? 0.0
+            await Logger.debug("Probability for \(label): \(probability)")
             return DozingResult(
                 dozing: Dozing(rawValue: label) ?? .idle,
                 confidence: probability
