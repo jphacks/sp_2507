@@ -16,11 +16,6 @@ enum DozingDetectionServiceError: Error {
     case modelResourceMissing
 }
 
-struct DozingResult {
-    let dozing: Dozing
-    let confidence: Double
-}
-
 @DependencyClient
 nonisolated struct DozingDetectionService {
     var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> DozingResult
@@ -50,9 +45,9 @@ extension DozingDetectionService: DependencyKey {
             let probability = prob[label] ?? 0.0
             print("Probaility: \(probability)")
             return DozingResult(
-                        dozing: Dozing(rawValue: label) ?? .idle,
-                        confidence: probability
-                     )
+                dozing: Dozing(rawValue: label) ?? .idle,
+                confidence: probability
+            )
         }
     )
 }

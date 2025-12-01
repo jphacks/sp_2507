@@ -131,10 +131,10 @@ final class DetectingModel {
         let motions = Array(motions.prefix(windowSize))
         self.motions.removeAll()
         let result = try await dozingDetectionService.predict(motions: motions)
-        self.dozing = result.dozing
+        dozing = result.dozing
         Logger.info("Dozing prediction: \(result.dozing)")
 
-        if result.dozing.isDozing && result.confidence > 0.99{
+        if result.dozing.isDozing && result.confidence > 0.99 {
             try await incrementDozingCount()
         }
     }
