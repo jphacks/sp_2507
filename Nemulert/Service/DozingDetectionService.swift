@@ -18,7 +18,7 @@ enum DozingDetectionServiceError: Error {
 
 @DependencyClient
 nonisolated struct DozingDetectionService {
-    var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> Dozing
+    var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> DozingResult
 }
 
 extension DozingDetectionService: DependencyKey {
@@ -39,9 +39,15 @@ extension DozingDetectionService: DependencyKey {
                     "stateIn": MLFeatureValue(multiArray: stateIn)
                 ]
             )
-            let prediction = try model.prediction(from: input)
+            let prediction = try await model.prediction(from: input)
             let label = prediction.featureValue(for: "label")?.stringValue ?? Dozing.idle.rawValue
-            return Dozing(rawValue: label) ?? .idle
+            let probabilityDict = prediction.featureValue(for: "labelProbability")?.dictionaryValue as? [String: Double] ?? [:]
+            let probability = probabilityDict[label] ?? 0.0
+            await Logger.debug("Probability for \(label): \(probability)")
+            return DozingResult(
+                dozing: Dozing(rawValue: label) ?? .idle,
+                confidence: probability
+            )
         }
     )
 }
@@ -49,13 +55,13 @@ extension DozingDetectionService: DependencyKey {
 nonisolated extension DozingDetectionService: TestDependencyKey {
     static let testValue = DozingDetectionService(
         predict: { _ in
-            .idle
+            DozingResult(dozing: .idle, confidence: 0.0)
         }
     )
 
     static let previewValue = DozingDetectionService(
         predict: { _ in
-            .idle
+            DozingResult(dozing: .idle, confidence: 0.0)
         }
     )
 }
