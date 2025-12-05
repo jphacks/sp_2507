@@ -102,7 +102,7 @@ struct DetectingModelTests {
 
         let model = withDependencies {
             $0.dozingDetectionService.predict = { _ in
-                .dozing
+                DozingResult(dozing: .dozing, confidence: 1.0)
             }
             $0.motionService.motionUpdates = { _ in
                 motionUpdates
@@ -129,7 +129,7 @@ struct DetectingModelTests {
         let model = withDependencies {
             $0.uuid = .incrementing
             $0.dozingDetectionService.predict = { _ in
-                .dozing
+                DozingResult(dozing: .dozing, confidence: 1.0)
             }
             $0.motionService.motionUpdates = { _ in
                 motionUpdates
