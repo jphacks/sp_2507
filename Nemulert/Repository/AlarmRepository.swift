@@ -102,7 +102,7 @@ nonisolated extension AlarmRepository: TestDependencyKey {
 }
 
 extension DependencyValues {
-    nonisolated var alarmService: AlarmRepository {
+    nonisolated var alarmRepository: AlarmRepository {
         get { self[AlarmRepository.self] }
         set { self[AlarmRepository.self] = newValue }
     }

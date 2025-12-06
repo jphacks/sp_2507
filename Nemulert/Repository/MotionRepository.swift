@@ -76,7 +76,7 @@ nonisolated extension MotionRepository: TestDependencyKey {
 }
 
 extension DependencyValues {
-    nonisolated var motionService: MotionRepository {
+    nonisolated var motionRepository: MotionRepository {
         get { self[MotionRepository.self] }
         set { self[MotionRepository.self] = newValue }
     }

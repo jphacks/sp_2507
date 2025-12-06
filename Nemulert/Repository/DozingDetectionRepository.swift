@@ -63,7 +63,7 @@ nonisolated extension DozingDetectionRepository: TestDependencyKey {
 }
 
 extension DependencyValues {
-    nonisolated var dozingDetectionService: DozingDetectionRepository {
+    nonisolated var dozingDetectionRepository: DozingDetectionRepository {
         get { self[DozingDetectionRepository.self] }
         set { self[DozingDetectionRepository.self] = newValue }
     }

@@ -43,13 +43,13 @@ final class DetectingModel {
     @ObservationIgnored
     @Dependency(\.uuid) private var uuid
     @ObservationIgnored
-    @Dependency(\.alarmService) private var alarmService
+    @Dependency(\.alarmRepository) private var alarmService
     @ObservationIgnored
-    @Dependency(\.dozingDetectionService) private var dozingDetectionService
+    @Dependency(\.dozingDetectionRepository) private var dozingDetectionService
     @ObservationIgnored
-    @Dependency(\.motionService) private var motionService
+    @Dependency(\.motionRepository) private var motionService
     @ObservationIgnored
-    @Dependency(\.notificationService) private var notificationService
+    @Dependency(\.notificationRepository) private var notificationService
 
     func onAppear() {
         Task {

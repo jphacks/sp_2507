@@ -31,7 +31,7 @@ struct DetectingModelTests {
         let (connectionUpdates, connectionUpdatesContinuation) = AsyncStream<Bool>.makeStream()
 
         let model = withDependencies {
-            $0.motionService.connectionUpdates = {
+            $0.motionRepository.connectionUpdates = {
                 connectionUpdates
             }
         } operation: {
@@ -58,7 +58,7 @@ struct DetectingModelTests {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
-            $0.motionService.motionUpdates = { _ in
+            $0.motionRepository.motionUpdates = { _ in
                 motionUpdates
             }
         } operation: {
@@ -78,7 +78,7 @@ struct DetectingModelTests {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
-            $0.motionService.motionUpdates = { _ in
+            $0.motionRepository.motionUpdates = { _ in
                 motionUpdates
             }
         } operation: {
@@ -101,10 +101,10 @@ struct DetectingModelTests {
         let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
 
         let model = withDependencies {
-            $0.dozingDetectionService.predict = { _ in
+            $0.dozingDetectionRepository.predict = { _ in
                 DozingResult(dozing: .dozing, confidence: 1.0)
             }
-            $0.motionService.motionUpdates = { _ in
+            $0.motionRepository.motionUpdates = { _ in
                 motionUpdates
             }
         } operation: {
@@ -128,10 +128,10 @@ struct DetectingModelTests {
 
         let model = withDependencies {
             $0.uuid = .incrementing
-            $0.dozingDetectionService.predict = { _ in
+            $0.dozingDetectionRepository.predict = { _ in
                 DozingResult(dozing: .dozing, confidence: 1.0)
             }
-            $0.motionService.motionUpdates = { _ in
+            $0.motionRepository.motionUpdates = { _ in
                 motionUpdates
             }
         } operation: {

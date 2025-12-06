@@ -63,7 +63,7 @@ nonisolated extension NotificationRepository: TestDependencyKey {
 }
 
 extension DependencyValues {
-    nonisolated var notificationService: NotificationRepository {
+    nonisolated var notificationRepository: NotificationRepository {
         get { self[NotificationRepository.self] }
         set { self[NotificationRepository.self] = newValue }
     }
