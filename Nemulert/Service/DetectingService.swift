@@ -152,7 +152,6 @@ final actor DetectingService {
     /// 受け取ったモーションデータを処理
     /// - Parameter motion: モーションデータ
     private func handleMotion(_ motion: DeviceMotion) async throws {
-        await Logger.debug(motion)
         guard try alarmRepository.getAlarms().isEmpty else { return }
         self.motion = motion
         guard motions.count >= windowSize else { return }
