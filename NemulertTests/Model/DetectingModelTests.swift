@@ -38,15 +38,15 @@ struct DetectingModelTests {
 
         #expect(model.isConnected == false)
 
-        await confirmation(expectedCount: 1) { confirm in
-            let task = Task {
-                for await _ in Observations({ model.isConnected }) {
-                    confirm()
-                }
+        let task = Task {
+            for await _ in Observations({ model.isConnected }).dropFirst() {
+                break
             }
-            connectionContinuation.yield(true)
-            await task.value
         }
+
+        connectionContinuation.yield(true)
+
+        await task.value
 
         #expect(model.isConnected == true)
     }
