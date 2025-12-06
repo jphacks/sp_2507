@@ -20,14 +20,11 @@ struct DetectingScreen: View {
             .onChange(of: scenePhase) { oldPhase, newPhase in
                 switch (oldPhase, newPhase) {
                 case (.inactive, .active), (.background, .active):
-                    Task {
-                        await model.onSceneChanged()
-                    }
+                    model.onSceneChanged()
 
                 default:
                     break
                 }
-
             }
     }
 }

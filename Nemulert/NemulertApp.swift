@@ -13,7 +13,7 @@ struct NemulertApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DetectingScreen()
+            ContentScreen()
                 .preferredColorScheme(.dark)
         }
     }
