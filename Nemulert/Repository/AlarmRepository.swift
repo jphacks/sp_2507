@@ -12,7 +12,7 @@ import SwiftUI
 
 @DependencyClient
 nonisolated struct AlarmRepository {
-    var requestAuthorization: @Sendable () async throws -> AlarmManager.AuthorizationState
+    var requestAuthorization: @Sendable () async throws -> Bool
     var getAlarms: @Sendable () throws -> [Alarm]
     var scheduleAlarm: @Sendable (_ id: Alarm.ID) async throws -> Void
     var cancelAllAlarms: @Sendable () async throws -> Void
@@ -21,7 +21,15 @@ nonisolated struct AlarmRepository {
 extension AlarmRepository: DependencyKey {
     static let liveValue = AlarmRepository(
         requestAuthorization: {
-            try await AlarmManager.shared.requestAuthorization()
+            let status = try await AlarmManager.shared.requestAuthorization()
+
+            switch status {
+            case .authorized:
+                return true
+
+            default:
+                return false
+            }
         },
         getAlarms: {
             try AlarmManager.shared.alarms
@@ -76,7 +84,7 @@ extension AlarmRepository: DependencyKey {
 nonisolated extension AlarmRepository: TestDependencyKey {
     static let testValue = AlarmRepository(
         requestAuthorization: {
-            .notDetermined
+            false
         },
         getAlarms: {
             []
@@ -89,7 +97,7 @@ nonisolated extension AlarmRepository: TestDependencyKey {
 
     static let previewValue = AlarmRepository(
         requestAuthorization: {
-            .notDetermined
+            false
         },
         getAlarms: {
             []

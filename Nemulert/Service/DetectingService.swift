@@ -70,6 +70,9 @@ final actor DetectingService {
         }
     }
 
+    private(set) var isAlarmAuthorized: Bool = false
+    private(set) var isNotificationAuthorized: Bool = false
+
     @Dependency(\.uuid) private var uuid
     @Dependency(\.alarmRepository) private var alarmRepository
     @Dependency(\.dozingDetectionRepository) private var dozingDetectionRepository
@@ -83,15 +86,17 @@ final actor DetectingService {
     /// `.notDetermined`の場合は、ダイアログが表示される。
     func requestAuthorizations() async {
         do {
-            let authorization = try await alarmRepository.requestAuthorization()
-            await Logger.info("Alarm authorization status: \(authorization)")
+            let isAuthorized = try await alarmRepository.requestAuthorization()
+            isAlarmAuthorized = isAuthorized
+            await Logger.info("Alarm authorized: \(isAuthorized)")
         } catch {
             await Logger.error(error)
         }
 
         do {
             let isAuthorized = try await notificationRepository.requestAuthorization()
-            await Logger.info("Notification authorization granted: \(isAuthorized)")
+            isNotificationAuthorized = isAuthorized
+            await Logger.info("Notification is authorized: \(isAuthorized)")
         } catch {
             await Logger.error(error)
         }
