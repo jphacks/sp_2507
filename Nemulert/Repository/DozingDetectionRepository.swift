@@ -1,5 +1,5 @@
 //
-//  DozingDetectionService.swift
+//  DozingDetectionRepository.swift
 //  Nemulert
 //
 //  Created by Kanta Oikawa on 2025/10/29.
@@ -12,21 +12,17 @@ import DependenciesMacros
 import Foundation
 import UserNotifications
 
-enum DozingDetectionServiceError: Error {
-    case modelResourceMissing
-}
-
 @DependencyClient
-nonisolated struct DozingDetectionService {
+nonisolated struct DozingDetectionRepository {
     var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> DozingResult
 }
 
-extension DozingDetectionService: DependencyKey {
-    static let liveValue = DozingDetectionService(
+extension DozingDetectionRepository: DependencyKey {
+    static let liveValue = DozingDetectionRepository(
         predict: { motions in
             let configuration = MLModelConfiguration()
             guard let modelURL = Bundle.main.url(forResource: "DozingDetection", withExtension: "mlmodelc") else {
-                throw DozingDetectionServiceError.modelResourceMissing
+                throw DozingDetectionRepositoryError.modelResourceMissing
             }
             let model = try MLModel(contentsOf: modelURL, configuration: configuration)
             let rotationRateX = try MLMultiArray(motions.map { $0.rotationRate.x })
@@ -52,14 +48,14 @@ extension DozingDetectionService: DependencyKey {
     )
 }
 
-nonisolated extension DozingDetectionService: TestDependencyKey {
-    static let testValue = DozingDetectionService(
+nonisolated extension DozingDetectionRepository: TestDependencyKey {
+    static let testValue = DozingDetectionRepository(
         predict: { _ in
             DozingResult(dozing: .idle, confidence: 0.0)
         }
     )
 
-    static let previewValue = DozingDetectionService(
+    static let previewValue = DozingDetectionRepository(
         predict: { _ in
             DozingResult(dozing: .idle, confidence: 0.0)
         }
@@ -67,8 +63,8 @@ nonisolated extension DozingDetectionService: TestDependencyKey {
 }
 
 extension DependencyValues {
-    nonisolated var dozingDetectionService: DozingDetectionService {
-        get { self[DozingDetectionService.self] }
-        set { self[DozingDetectionService.self] = newValue }
+    nonisolated var dozingDetectionService: DozingDetectionRepository {
+        get { self[DozingDetectionRepository.self] }
+        set { self[DozingDetectionRepository.self] = newValue }
     }
 }

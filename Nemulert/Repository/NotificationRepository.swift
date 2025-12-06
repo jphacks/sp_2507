@@ -1,5 +1,5 @@
 //
-//  NotificationService.swift
+//  NotificationRepository.swift
 //  Nemulert
 //
 //  Created by Kanta Oikawa on 2025/10/29.
@@ -10,13 +10,13 @@ import DependenciesMacros
 import UserNotifications
 
 @DependencyClient
-nonisolated struct NotificationService {
+nonisolated struct NotificationRepository {
     var requestAuthorization: @Sendable () async throws -> Bool
     var requestNotification: @Sendable (_ title: String, _ body: String, _ categoryIdentifier: String) async throws -> Void
 }
 
-extension NotificationService: DependencyKey {
-    static let liveValue = NotificationService(
+extension NotificationRepository: DependencyKey {
+    static let liveValue = NotificationRepository(
         requestAuthorization: {
             try await UNUserNotificationCenter.current().requestAuthorization(
                 options: [.alert, .badge, .sound]
@@ -44,8 +44,8 @@ extension NotificationService: DependencyKey {
     )
 }
 
-nonisolated extension NotificationService: TestDependencyKey {
-    static let testValue = NotificationService(
+nonisolated extension NotificationRepository: TestDependencyKey {
+    static let testValue = NotificationRepository(
         requestAuthorization: {
             false
         },
@@ -53,7 +53,7 @@ nonisolated extension NotificationService: TestDependencyKey {
         }
     )
 
-    static let previewValue = NotificationService(
+    static let previewValue = NotificationRepository(
         requestAuthorization: {
             false
         },
@@ -63,8 +63,8 @@ nonisolated extension NotificationService: TestDependencyKey {
 }
 
 extension DependencyValues {
-    nonisolated var notificationService: NotificationService {
-        get { self[NotificationService.self] }
-        set { self[NotificationService.self] = newValue }
+    nonisolated var notificationService: NotificationRepository {
+        get { self[NotificationRepository.self] }
+        set { self[NotificationRepository.self] = newValue }
     }
 }
