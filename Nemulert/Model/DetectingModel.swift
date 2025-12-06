@@ -11,6 +11,8 @@ import SwiftUI
 
 @Observable
 final class DetectingModel {
+    private(set) var isConnected: Bool = false
+
     private let detectingService = DetectingService()
 
     func onAppear() {
@@ -18,6 +20,9 @@ final class DetectingModel {
             await detectingService.requestAuthorizations()
             await detectingService.restartTasks()
 
+            for await isConnected in detectingService.connectionStream {
+                self.isConnected = isConnected
+            }
         }
     }
 

@@ -9,14 +9,23 @@ import Dependencies
 import Foundation
 
 final actor DetectingService {
-    private(set) var isConnected: Bool = false
+    /// 直近のモーション
+    ///
+    /// セット時に`motions`に追加する。
     private(set) var motion: DeviceMotion? = nil {
         willSet {
             guard let newValue else { return }
             motions.append(newValue)
         }
     }
+    /// モーションのログ
+    ///
+    /// `motion`セット時に追加される。
     private(set) var motions: [DeviceMotion] = []
+
+    /// 直近の居眠り判定結果
+    ///
+    /// セット時に`dozingCount`の値をセットする。
     private(set) var dozing: Dozing = .idle {
         willSet {
             switch newValue {
@@ -28,16 +37,33 @@ final actor DetectingService {
             }
         }
     }
+    /// 連続居眠り判定回数
+    ///
+    /// `dozing`セット時に合わせてセットされる。
     private(set) var dozingCount: Int = 0
-
+    
+    /// AirPods 接続状態
+    let (connectionStream, connectionContinuation) = AsyncStream<Bool>.makeStream()
+    
+    /// 居眠り判定に使用するモーションデータ数
+    ///
+    /// Core ML モデルのWindowサイズに合わせる。異なるとクラッシュする。
     let windowSize: Int = 130
-    private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
 
+    /// モーションデータを監視するQueueの名前
+    private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
+    
+    /// AirPods 接続状態を受け取るタスク
+    ///
+    /// 新しい値がセットされたら、古いタスクをキャンセルする。
     private var updateConnectionTask: Task<Void, Error>? {
         didSet {
             oldValue?.cancel()
         }
     }
+    /// モーションデータを受け取るタスク
+    ///
+    /// 新しい値がセットされたら、古いタスクをキャンセルする。
     private var updateMotionTask: Task<Void, Error>? {
         didSet {
             oldValue?.cancel()
@@ -49,7 +75,12 @@ final actor DetectingService {
     @Dependency(\.dozingDetectionRepository) private var dozingDetectionRepository
     @Dependency(\.motionRepository) private var motionRepository
     @Dependency(\.notificationRepository) private var notificationRepository
-
+    
+    /// 権限リクエスト
+    ///
+    /// アラームとPush通知の権限をリクエストする。
+    ///
+    /// `.notDetermined`の場合は、ダイアログが表示される。
     func requestAuthorizations() async {
         do {
             let authorization = try await alarmRepository.requestAuthorization()
@@ -65,7 +96,10 @@ final actor DetectingService {
             await Logger.error(error)
         }
     }
-
+    
+    /// アラーム解除
+    ///
+    /// 設定されている全てのアラームを解除する。
     func cancelAllAlarms() async {
         do {
             try await alarmRepository.cancelAllAlarms()
@@ -73,19 +107,23 @@ final actor DetectingService {
             await Logger.error(error)
         }
     }
-
+    
+    /// タスクを再起動
+    ///
+    /// AirPods 接続状態、モーションデータを受け取るタスクを再起動する。
     func restartTasks() {
         dozing = .idle
         restartConnectionUpdateTask()
         restartMotionUpdateTask()
     }
-
+    
+    /// AirPods 接続状態を受け取るタスクを再起動
     private func restartConnectionUpdateTask() {
         updateConnectionTask = Task {
             do {
                 for await isConnected in try motionRepository.connectionUpdates() {
                     await Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
-                    self.isConnected = isConnected
+                    connectionContinuation.yield(isConnected)
                     if isConnected {
                         restartMotionUpdateTask()
                     }
@@ -97,6 +135,7 @@ final actor DetectingService {
         }
     }
 
+    /// モーションデータを受け取るタスクを再起動
     private func restartMotionUpdateTask() {
         updateMotionTask = Task {
             do {
@@ -110,7 +149,10 @@ final actor DetectingService {
         }
     }
 
+    /// 受け取ったモーションデータを処理
+    /// - Parameter motion: モーションデータ
     private func handleMotion(_ motion: DeviceMotion) async throws {
+        await Logger.debug(motion)
         guard try alarmRepository.getAlarms().isEmpty else { return }
         self.motion = motion
         guard motions.count >= windowSize else { return }
@@ -119,7 +161,9 @@ final actor DetectingService {
         let result = try await dozingDetectionRepository.predict(motions: motions)
         try await handlePredictionResult(result)
     }
-
+    
+    /// 居眠り判定予測結果を処理
+    /// - Parameter result: 居眠り判定予測結果
     private func handlePredictionResult(_ result: DozingResult) async throws {
         if await result.dozing.isDozing && result.confidence > 0.99 {
             dozing = .dozing
@@ -130,7 +174,6 @@ final actor DetectingService {
                     body: String(localized: "Tap to continue working!"),
                     categoryIdentifier: "dozing"
                 )
-                dozingCount = 0
             }
         } else {
             dozing = .idle

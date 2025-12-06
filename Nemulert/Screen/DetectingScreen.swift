@@ -25,7 +25,6 @@ struct DetectingScreen: View {
                 default:
                     break
                 }
-
             }
     }
 }
