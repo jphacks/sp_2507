@@ -22,8 +22,8 @@ struct DetectingModelTests {
         #expect(model.isConnected == false)
     }
 
-    @Test("ヘッドフォンが接続・切断された", .timeLimit(.minutes(1)))
-    @MainActor func testOnHeadphoneConnectedAndDisconnected() async throws {
+    @Test("ヘッドフォンが接続された", .timeLimit(.minutes(1)))
+    @MainActor func testOnHeadphoneConnected() async throws {
         let (connectionStream, connectionContinuation) = AsyncStream<Bool>.makeStream()
 
         let model = withDependencies {
