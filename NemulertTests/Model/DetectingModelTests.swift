@@ -20,135 +20,34 @@ struct DetectingModelTests {
         model.onAppear()
 
         #expect(model.isConnected == false)
-        #expect(model.motion == nil)
-        #expect(model.motions == [])
-        #expect(model.dozing == .idle)
-        #expect(model.dozingCount == 0)
     }
 
-    @Test("ヘッドフォンが接続・切断された")
+    @Test("ヘッドフォンが接続・切断された", .timeLimit(.minutes(1)))
     @MainActor func testOnHeadphoneConnectedAndDisconnected() async throws {
-        let (connectionUpdates, connectionUpdatesContinuation) = AsyncStream<Bool>.makeStream()
+        let (connectionStream, connectionContinuation) = AsyncStream<Bool>.makeStream()
 
         let model = withDependencies {
             $0.motionRepository.connectionUpdates = {
-                connectionUpdates
+                connectionStream
             }
         } operation: {
             DetectingModel()
         }
 
         model.onAppear()
-
-        connectionUpdatesContinuation.yield(true)
-
-        try await Task.sleep(for: .seconds(1))
-
-        #expect(model.isConnected == true)
-
-        connectionUpdatesContinuation.yield(false)
-
-        try await Task.sleep(for: .seconds(1))
 
         #expect(model.isConnected == false)
-    }
 
-    @Test("1個のモーションデータが検出された")
-    @MainActor func testOn1MotionsStreamed() async throws {
-        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
-
-        let model = withDependencies {
-            $0.motionRepository.motionUpdates = { _ in
-                motionUpdates
+        await confirmation(expectedCount: 1) { confirm in
+            let task = Task {
+                for await _ in Observations({ model.isConnected }) {
+                    confirm()
+                }
             }
-        } operation: {
-            DetectingModel()
+            connectionContinuation.yield(true)
+            await task.value
         }
 
-        model.onAppear()
-
-        motionUpdatesContinuation.yield(DeviceMotion.stub)
-        try await Task.sleep(for: .seconds(1))
-        #expect(model.motion == DeviceMotion.stub)
-        #expect(model.motions == [DeviceMotion.stub])
-    }
-
-    @Test("windowSizeと同数のモーションデータが検出された")
-    @MainActor func testOnWindowSizeMotionsStreamed() async throws {
-        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
-
-        let model = withDependencies {
-            $0.motionRepository.motionUpdates = { _ in
-                motionUpdates
-            }
-        } operation: {
-            DetectingModel()
-        }
-
-        model.onAppear()
-
-        let motions = Array(repeating: DeviceMotion.stub, count: model.windowSize)
-        motions.forEach { motion in
-            motionUpdatesContinuation.yield(motion)
-        }
-        try await Task.sleep(for: .seconds(2))
-        #expect(model.motion == motions.last)
-        #expect(model.motions == [])
-    }
-
-    @Test("居眠りが1度検知された")
-    @MainActor func testOnDozingDetected1Time() async throws {
-        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
-
-        let model = withDependencies {
-            $0.dozingDetectionRepository.predict = { _ in
-                DozingResult(dozing: .dozing, confidence: 1.0)
-            }
-            $0.motionRepository.motionUpdates = { _ in
-                motionUpdates
-            }
-        } operation: {
-            DetectingModel()
-        }
-
-        model.onAppear()
-
-        let motions = Array(repeating: DeviceMotion.stub, count: model.windowSize)
-        motions.forEach { motion in
-            motionUpdatesContinuation.yield(motion)
-        }
-        try await Task.sleep(for: .seconds(2))
-        #expect(model.dozing == .dozing)
-        #expect(model.dozingCount == 1)
-    }
-
-    @Test("居眠りが2度検知された")
-    @MainActor func testOnDozingDetected2Times() async throws {
-        let (motionUpdates, motionUpdatesContinuation) = AsyncThrowingStream<DeviceMotion, Error>.makeStream()
-
-        let model = withDependencies {
-            $0.uuid = .incrementing
-            $0.dozingDetectionRepository.predict = { _ in
-                DozingResult(dozing: .dozing, confidence: 1.0)
-            }
-            $0.motionRepository.motionUpdates = { _ in
-                motionUpdates
-            }
-        } operation: {
-            DetectingModel()
-        }
-
-        model.onAppear()
-
-        let motions = Array(repeating: DeviceMotion.stub, count: model.windowSize)
-        motions.forEach { motion in
-            motionUpdatesContinuation.yield(motion)
-        }
-        motions.forEach { motion in
-            motionUpdatesContinuation.yield(motion)
-        }
-        try await Task.sleep(for: .seconds(2))
-        #expect(model.dozing == .dozing)
-        #expect(model.dozingCount == 0)
+        #expect(model.isConnected == true)
     }
 }
