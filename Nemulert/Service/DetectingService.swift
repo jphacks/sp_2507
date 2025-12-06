@@ -19,7 +19,11 @@ final actor DetectingService {
     private(set) var motions: [DeviceMotion] = []
     private(set) var dozing: Dozing = .idle {
         willSet {
-            if dozing == .dozing {
+            switch newValue {
+            case .idle:
+                dozingCount = 0
+
+            case .dozing:
                 dozingCount += 1
             }
         }
@@ -72,7 +76,6 @@ final actor DetectingService {
 
     func restartTasks() {
         dozing = .idle
-        dozingCount = 0
         restartConnectionUpdateTask()
         restartMotionUpdateTask()
     }
@@ -108,13 +111,9 @@ final actor DetectingService {
     }
 
     private func handleMotion(_ motion: DeviceMotion) async throws {
-        guard try alarmRepository.getAlarms().isEmpty else {
-            return
-        }
+        guard try alarmRepository.getAlarms().isEmpty else { return }
         self.motion = motion
-        guard motions.count >= windowSize else {
-            return
-        }
+        guard motions.count >= windowSize else { return }
         let motions = Array(motions.prefix(windowSize))
         self.motions.removeAll()
         let result = try await dozingDetectionRepository.predict(motions: motions)
