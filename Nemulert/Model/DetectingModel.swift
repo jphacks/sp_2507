@@ -33,7 +33,10 @@ final class DetectingModel {
             oldValue?.cancel()
         }
     }
-
+    
+    /// 画面が表示された時
+    ///
+    /// アラームと通知の権限をリクエストし、タスクを起動する。
     func onAppear() async {
         do {
             try await detectingService.requestAlarmAuthorization()
@@ -58,7 +61,10 @@ final class DetectingModel {
             }
         }
     }
-
+    
+    /// シーンが切り替わった時
+    ///
+    /// 設定されている全てのアラームを解除し、タスクを再起動する。
     func onSceneChanged() async {
         do {
             try await detectingService.cancelAllAlarms()
