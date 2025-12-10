@@ -14,6 +14,17 @@ final class DetectingModel {
     private(set) var isConnected: Bool = false
     private(set) var isAlarmAuthorized: Bool = false
     private(set) var isNotificationAuthorized: Bool = false
+    var isAlertPresented: Bool {
+        get {
+            domainError != nil
+        }
+        set {
+            if !newValue {
+                domainError = nil
+            }
+        }
+    }
+    private(set) var domainError: DomainError?
 
     private let detectingService = DetectingService()
 
@@ -24,8 +35,20 @@ final class DetectingModel {
     }
 
     func onAppear() async {
-        isAlarmAuthorized = (try? await detectingService.requestAlarmAuthorization()) ?? false
-        isNotificationAuthorized = (try? await detectingService.requestNotificationAuthorization()) ?? false
+        do {
+            try await detectingService.requestAlarmAuthorization()
+            isAlarmAuthorized = true
+        } catch {
+            Logger.error(error)
+            isAlarmAuthorized = false
+        }
+        do {
+            try await detectingService.requestNotificationAuthorization()
+            isNotificationAuthorized = true
+        } catch {
+            Logger.error(error)
+            isNotificationAuthorized = false
+        }
 
         await detectingService.restartTasks()
 
@@ -37,7 +60,12 @@ final class DetectingModel {
     }
 
     func onSceneChanged() async {
-        await detectingService.cancelAllAlarms()
+        do {
+            try await detectingService.cancelAllAlarms()
+        } catch {
+            Logger.error(error)
+            domainError = DomainError(error)
+        }
         await detectingService.restartTasks()
     }
 }

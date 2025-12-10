@@ -78,25 +78,21 @@ final actor DetectingService {
 
     /// AlarmKit の権限リクエスト
     /// - Returns: 許可されたかどうか
-    func requestAlarmAuthorization() async throws -> Bool {
+    func requestAlarmAuthorization() async throws {
         try await alarmRepository.requestAuthorization()
     }
     
     /// 通知の権限リクエスト
     /// - Returns: 許可されたかどうか
-    func requestNotificationAuthorization() async throws -> Bool {
+    func requestNotificationAuthorization() async throws {
         try await notificationRepository.requestAuthorization()
     }
 
     /// アラーム解除
     ///
     /// 設定されている全てのアラームを解除する。
-    func cancelAllAlarms() async {
-        do {
-            try await alarmRepository.cancelAllAlarms()
-        } catch {
-            await Logger.error(error)
-        }
+    func cancelAllAlarms() async throws {
+        try await alarmRepository.cancelAllAlarms()
     }
     
     /// タスクを再起動

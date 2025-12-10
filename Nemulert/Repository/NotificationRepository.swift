@@ -11,16 +11,20 @@ import UserNotifications
 
 @DependencyClient
 nonisolated struct NotificationRepository {
-    var requestAuthorization: @Sendable () async throws -> Bool
+    var requestAuthorization: @Sendable () async throws -> Void
     var requestNotification: @Sendable (_ title: String, _ body: String, _ categoryIdentifier: String) async throws -> Void
 }
 
 extension NotificationRepository: DependencyKey {
     static let liveValue = NotificationRepository(
         requestAuthorization: {
-            try await UNUserNotificationCenter.current().requestAuthorization(
-                options: [.alert, .badge, .sound]
-            )
+            do {
+                try await UNUserNotificationCenter.current().requestAuthorization(
+                    options: [.alert, .badge, .sound]
+                )
+            } catch {
+                throw DomainError.notificationNotAuthorized
+            }
         },
         requestNotification: { title, body, categoryIdentifier in
             let identifier = UUID().uuidString
@@ -47,7 +51,6 @@ extension NotificationRepository: DependencyKey {
 nonisolated extension NotificationRepository: TestDependencyKey {
     static let testValue = NotificationRepository(
         requestAuthorization: {
-            false
         },
         requestNotification: { _, _, _ in
         }
@@ -55,7 +58,6 @@ nonisolated extension NotificationRepository: TestDependencyKey {
 
     static let previewValue = NotificationRepository(
         requestAuthorization: {
-            false
         },
         requestNotification: { _, _, _ in
         }

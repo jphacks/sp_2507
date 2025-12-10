@@ -12,7 +12,7 @@ import SwiftUI
 
 @DependencyClient
 nonisolated struct AlarmRepository {
-    var requestAuthorization: @Sendable () async throws -> Bool
+    var requestAuthorization: @Sendable () async throws -> Void
     var getAlarms: @Sendable () throws -> [Alarm]
     var scheduleAlarm: @Sendable (_ id: Alarm.ID) async throws -> Void
     var cancelAllAlarms: @Sendable () async throws -> Void
@@ -21,14 +21,18 @@ nonisolated struct AlarmRepository {
 extension AlarmRepository: DependencyKey {
     static let liveValue = AlarmRepository(
         requestAuthorization: {
-            let status = try await AlarmManager.shared.requestAuthorization()
+            do {
+                let status = try await AlarmManager.shared.requestAuthorization()
 
-            switch status {
-            case .authorized:
-                return true
+                switch status {
+                case .authorized:
+                    return
 
-            default:
-                return false
+                default:
+                    throw DomainError.alarmNotAuthorized
+                }
+            } catch {
+                throw DomainError.alarmNotAuthorized
             }
         },
         getAlarms: {
@@ -70,7 +74,11 @@ extension AlarmRepository: DependencyKey {
             )
         },
         cancelAllAlarms: {
-            try await cancelAllAlarms()
+            do {
+                try await cancelAllAlarms()
+            } catch {
+                throw DomainError.failedToCancelAlarm
+            }
         }
     )
 
@@ -84,7 +92,6 @@ extension AlarmRepository: DependencyKey {
 nonisolated extension AlarmRepository: TestDependencyKey {
     static let testValue = AlarmRepository(
         requestAuthorization: {
-            false
         },
         getAlarms: {
             []
@@ -97,7 +104,6 @@ nonisolated extension AlarmRepository: TestDependencyKey {
 
     static let previewValue = AlarmRepository(
         requestAuthorization: {
-            false
         },
         getAlarms: {
             []

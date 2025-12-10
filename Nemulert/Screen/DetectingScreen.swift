@@ -28,6 +28,13 @@ struct DetectingScreen: View {
                     break
                 }
             }
+            .alert(
+                model.domainError?.title ?? "",
+                isPresented: $model.isAlertPresented,
+                presenting: model.domainError?.description,
+                actions: { _ in },
+                message: Text.init
+            )
     }
 }
 
