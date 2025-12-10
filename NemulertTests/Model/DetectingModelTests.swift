@@ -14,7 +14,7 @@ import Testing
 
 @MainActor
 struct DetectingModelTests {
-    @Test("画面が表示された際にアラームと通知の許可がリクエストされること")
+    @Test("画面が表示された時に、アラームと通知の許可がリクエストされること")
     func testOnAppear() async throws {
         let model = DetectingModel()
 
@@ -27,7 +27,7 @@ struct DetectingModelTests {
         #expect(model.isNotificationAuthorized == true)
     }
 
-    @Test("画面が表示された際にアラームと通知の許可がリクエストされ、拒否されること")
+    @Test("画面が表示された時に、アラームと通知の許可がリクエストされ、拒否されること")
     func testOnAppearWithAuthorizationDenied() async throws {
         let model = withDependencies {
             $0.alarmRepository.requestAuthorization = {
@@ -49,7 +49,7 @@ struct DetectingModelTests {
         #expect(model.isNotificationAuthorized == false)
     }
 
-    @Test("ヘッドフォンが接続された", .timeLimit(.minutes(1)))
+    @Test("ヘッドフォンが接続された時に、接続状態が変化すること", .timeLimit(.minutes(1)))
     func testOnHeadphoneConnected() async throws {
         let (connectionStream, connectionContinuation) = AsyncStream<Bool>.makeStream()
 
@@ -76,5 +76,9 @@ struct DetectingModelTests {
         await task.value
 
         #expect(model.isConnected == true)
+    }
+
+    @Test("シーンが切り替わった時に、全てのアラームが解除され、タスクが再起動されること")
+    func testOnSceneChanged() async throws {
     }
 }
