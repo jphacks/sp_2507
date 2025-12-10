@@ -32,4 +32,12 @@ struct DetectingServiceTests {
         #expect(await service.isAlarmAuthorized == true)
         #expect(await service.isNotificationAuthorized == true)
     }
+
+    @Test("handleMotionでモーションが正しく処理されること")
+    func testHandleMotion() async throws {
+    }
+
+    @Test("handlePredictionResultで居眠り判定予測結果が正しく処理されること")
+    func testHandlePredictionResult() async throws {
+    }
 }
