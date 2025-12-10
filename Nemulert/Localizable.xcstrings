@@ -12,6 +12,18 @@
       },
       "shouldTranslate" : false
     },
+    "Alarm Access Denied" : {
+
+    },
+    "Alarm access is not authorized." : {
+
+    },
+    "An error occurred while trying to cancel the alarm. Please try again." : {
+
+    },
+    "An unknown error has occurred. Please try again later." : {
+
+    },
     "Are you dozing off?" : {
       "localizations" : {
         "ja" : {
@@ -31,6 +43,9 @@
           }
         }
       }
+    },
+    "Cancel Alarm Failed" : {
+
     },
     "Cancel the Alarm" : {
       "localizations" : {
@@ -65,8 +80,23 @@
     "Debug" : {
       "shouldTranslate" : false
     },
+    "Failed to cancel the alarm." : {
+
+    },
+    "Motion Access Denied" : {
+
+    },
+    "Motion access is not authorized." : {
+
+    },
     "Nemulert" : {
       "shouldTranslate" : false
+    },
+    "Notification Access Denied" : {
+
+    },
+    "Notification access is not authorized." : {
+
     },
     "Open App" : {
       "localizations" : {
@@ -77,6 +107,15 @@
           }
         }
       }
+    },
+    "Please enable alarm access in Settings to use this feature." : {
+
+    },
+    "Please enable motion access in Settings to use this feature." : {
+
+    },
+    "Please enable notification access in Settings to use this feature." : {
+
     },
     "Settings" : {
       "localizations" : {
@@ -97,6 +136,9 @@
           }
         }
       }
+    },
+    "Unknown Error" : {
+
     },
     "Version" : {
       "localizations" : {

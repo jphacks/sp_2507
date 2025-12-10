@@ -16,12 +16,25 @@ import Testing
 struct DetectingModelTests {
     @Test("画面が表示された際にアラームと通知の許可がリクエストされること")
     func testOnAppear() async throws {
+        let model = DetectingModel()
+
+        #expect(model.isAlarmAuthorized == false)
+        #expect(model.isNotificationAuthorized == false)
+
+        await model.onAppear()
+
+        #expect(model.isAlarmAuthorized == true)
+        #expect(model.isNotificationAuthorized == true)
+    }
+
+    @Test("画面が表示された際にアラームと通知の許可がリクエストされ、拒否されること")
+    func testOnAppearWithAuthorizationDenied() async throws {
         let model = withDependencies {
             $0.alarmRepository.requestAuthorization = {
-                true
+                throw DomainError.alarmNotAuthorized
             }
             $0.notificationRepository.requestAuthorization = {
-                true
+                throw DomainError.notificationNotAuthorized
             }
         } operation: {
             DetectingModel()
@@ -32,8 +45,8 @@ struct DetectingModelTests {
 
         await model.onAppear()
 
-        #expect(model.isAlarmAuthorized == true)
-        #expect(model.isNotificationAuthorized == true)
+        #expect(model.isAlarmAuthorized == false)
+        #expect(model.isNotificationAuthorized == false)
     }
 
     @Test("ヘッドフォンが接続された", .timeLimit(.minutes(1)))
