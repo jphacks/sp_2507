@@ -53,7 +53,12 @@ final class DetectingModel {
             isNotificationAuthorized = false
         }
 
-        await detectingService.restartTasks()
+        do {
+            try await detectingService.restartTasks()
+        } catch {
+            Logger.error(error)
+            domainError = DomainError(error)
+        }
 
         connectionTask = Task {
             for await isConnected in detectingService.connectionStream {
@@ -68,10 +73,10 @@ final class DetectingModel {
     func onSceneChanged() async {
         do {
             try await detectingService.cancelAllAlarms()
+            try await detectingService.restartTasks()
         } catch {
             Logger.error(error)
             domainError = DomainError(error)
         }
-        await detectingService.restartTasks()
     }
 }

@@ -41,10 +41,12 @@ final actor DetectingService {
     ///
     /// `dozing`セット時に合わせてセットされる。
     private(set) var dozingCount: Int = 0
-    
+
     /// AirPods 接続状態
     let (connectionStream, connectionContinuation) = AsyncStream<Bool>.makeStream()
-    
+    /// モーションデータ
+    let (motionStream, motionContinuation) = AsyncStream<DeviceMotion>.makeStream()
+
     /// 居眠り判定に使用するモーションデータ数
     ///
     /// Core ML モデルのWindowサイズに合わせる。異なるとクラッシュする。
@@ -52,7 +54,7 @@ final actor DetectingService {
 
     /// モーションデータを監視するQueueの名前
     private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
-    
+
     /// AirPods 接続状態を受け取るタスク
     ///
     /// 新しい値がセットされたら、古いタスクをキャンセルする。
@@ -81,7 +83,7 @@ final actor DetectingService {
     func requestAlarmAuthorization() async throws {
         try await alarmRepository.requestAuthorization()
     }
-    
+
     /// 通知の権限リクエスト
     /// - Returns: 許可されたかどうか
     func requestNotificationAuthorization() async throws {
@@ -94,44 +96,36 @@ final actor DetectingService {
     func cancelAllAlarms() async throws {
         try await alarmRepository.cancelAllAlarms()
     }
-    
+
     /// タスクを再起動
     ///
     /// AirPods 接続状態、モーションデータを受け取るタスクを再起動する。
-    func restartTasks() {
+    func restartTasks() async throws {
         dozing = .idle
-        restartConnectionUpdateTask()
-        restartMotionUpdateTask()
+        try restartConnectionUpdateTask()
+        try await restartMotionUpdateTask()
     }
-    
+
     /// AirPods 接続状態を受け取るタスクを再起動
-    private func restartConnectionUpdateTask() {
+    private func restartConnectionUpdateTask() throws {
+        let updates = try motionRepository.connectionUpdates()
+
         updateConnectionTask = Task {
-            do {
-                for await isConnected in try motionRepository.connectionUpdates() {
-                    await Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
-                    connectionContinuation.yield(isConnected)
-                    if isConnected {
-                        restartMotionUpdateTask()
-                    }
+            for await isConnected in updates {
+                connectionContinuation.yield(isConnected)
+                if isConnected {
+                    try await restartMotionUpdateTask()
                 }
-            } catch {
-                await Logger.error(error)
-                throw error
             }
         }
     }
 
     /// モーションデータを受け取るタスクを再起動
-    private func restartMotionUpdateTask() {
+    private func restartMotionUpdateTask() async throws {
+        let updates = try await motionRepository.motionUpdates(queueName: queueName)
         updateMotionTask = Task {
-            do {
-                for try await motion in try await motionRepository.motionUpdates(queueName: queueName) {
-                    try await handleMotion(motion)
-                }
-            } catch {
-                await Logger.error(error)
-                throw error
+            for try await motion in updates {
+                try await handleMotion(motion)
             }
         }
     }
@@ -147,7 +141,7 @@ final actor DetectingService {
         let result = try await dozingDetectionRepository.predict(motions: motions)
         try await handlePredictionResult(result)
     }
-    
+
     /// 居眠り判定予測結果を処理
     /// - Parameter result: 居眠り判定予測結果
     private func handlePredictionResult(_ result: DozingResult) async throws {
