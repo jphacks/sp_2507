@@ -12,24 +12,32 @@ import SwiftUI
 @Observable
 final class DetectingModel {
     private(set) var isConnected: Bool = false
+    private(set) var isAlarmAuthorized: Bool = false
+    private(set) var isNotificationAuthorized: Bool = false
 
     private let detectingService = DetectingService()
 
-    func onAppear() {
-        Task {
-            await detectingService.requestAuthorizations()
-            await detectingService.restartTasks()
+    private var connectionTask: Task<Void, Never>? {
+        didSet {
+            oldValue?.cancel()
+        }
+    }
 
+    func onAppear() async {
+        isAlarmAuthorized = (try? await detectingService.requestAlarmAuthorization()) ?? false
+        isNotificationAuthorized = (try? await detectingService.requestNotificationAuthorization()) ?? false
+
+        await detectingService.restartTasks()
+
+        connectionTask = Task {
             for await isConnected in detectingService.connectionStream {
                 self.isConnected = isConnected
             }
         }
     }
 
-    func onSceneChanged() {
-        Task {
-            await detectingService.cancelAllAlarms()
-            await detectingService.restartTasks()
-        }
+    func onSceneChanged() async {
+        await detectingService.cancelAllAlarms()
+        await detectingService.restartTasks()
     }
 }

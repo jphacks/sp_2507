@@ -14,13 +14,15 @@ struct DetectingScreen: View {
     var body: some View {
         LottieView(name: "Nemulert")
             .padding()
-            .onAppear {
-                model.onAppear()
+            .task {
+                await model.onAppear()
             }
             .onChange(of: scenePhase) { oldPhase, newPhase in
                 switch (oldPhase, newPhase) {
                 case (.inactive, .active), (.background, .active):
-                    model.onSceneChanged()
+                    Task {
+                        await model.onSceneChanged()
+                    }
 
                 default:
                     break

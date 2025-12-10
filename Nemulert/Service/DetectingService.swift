@@ -70,38 +70,24 @@ final actor DetectingService {
         }
     }
 
-    private(set) var isAlarmAuthorized: Bool = false
-    private(set) var isNotificationAuthorized: Bool = false
-
     @Dependency(\.uuid) private var uuid
     @Dependency(\.alarmRepository) private var alarmRepository
     @Dependency(\.dozingDetectionRepository) private var dozingDetectionRepository
     @Dependency(\.motionRepository) private var motionRepository
     @Dependency(\.notificationRepository) private var notificationRepository
-    
-    /// 権限リクエスト
-    ///
-    /// アラームとPush通知の権限をリクエストする。
-    ///
-    /// `.notDetermined`の場合は、ダイアログが表示される。
-    func requestAuthorizations() async {
-        do {
-            let isAuthorized = try await alarmRepository.requestAuthorization()
-            isAlarmAuthorized = isAuthorized
-            await Logger.info("Alarm authorized: \(isAuthorized)")
-        } catch {
-            await Logger.error(error)
-        }
 
-        do {
-            let isAuthorized = try await notificationRepository.requestAuthorization()
-            isNotificationAuthorized = isAuthorized
-            await Logger.info("Notification is authorized: \(isAuthorized)")
-        } catch {
-            await Logger.error(error)
-        }
+    /// AlarmKit の権限リクエスト
+    /// - Returns: 許可されたかどうか
+    func requestAlarmAuthorization() async throws -> Bool {
+        try await alarmRepository.requestAuthorization()
     }
     
+    /// 通知の権限リクエスト
+    /// - Returns: 許可されたかどうか
+    func requestNotificationAuthorization() async throws -> Bool {
+        try await notificationRepository.requestAuthorization()
+    }
+
     /// アラーム解除
     ///
     /// 設定されている全てのアラームを解除する。

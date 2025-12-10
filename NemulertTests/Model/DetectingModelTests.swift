@@ -14,13 +14,26 @@ import Testing
 
 @MainActor
 struct DetectingModelTests {
-    @Test("画面が表示された")
+    @Test("画面が表示された際にアラームと通知の許可がリクエストされること")
     func testOnAppear() async throws {
-        let model = DetectingModel()
+        let model = withDependencies {
+            $0.alarmRepository.requestAuthorization = {
+                true
+            }
+            $0.notificationRepository.requestAuthorization = {
+                true
+            }
+        } operation: {
+            DetectingModel()
+        }
 
-        model.onAppear()
+        #expect(model.isAlarmAuthorized == false)
+        #expect(model.isNotificationAuthorized == false)
 
-        #expect(model.isConnected == false)
+        await model.onAppear()
+
+        #expect(model.isAlarmAuthorized == true)
+        #expect(model.isNotificationAuthorized == true)
     }
 
     @Test("ヘッドフォンが接続された", .timeLimit(.minutes(1)))
@@ -35,7 +48,7 @@ struct DetectingModelTests {
             DetectingModel()
         }
 
-        model.onAppear()
+        await model.onAppear()
 
         #expect(model.isConnected == false)
 
