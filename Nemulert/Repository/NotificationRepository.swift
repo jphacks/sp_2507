@@ -1,5 +1,5 @@
 //
-//  NotificationService.swift
+//  NotificationRepository.swift
 //  Nemulert
 //
 //  Created by Kanta Oikawa on 2025/10/29.
@@ -10,17 +10,21 @@ import DependenciesMacros
 import UserNotifications
 
 @DependencyClient
-nonisolated struct NotificationService {
-    var requestAuthorization: @Sendable () async throws -> Bool
+nonisolated struct NotificationRepository {
+    var requestAuthorization: @Sendable () async throws -> Void
     var requestNotification: @Sendable (_ title: String, _ body: String, _ categoryIdentifier: String) async throws -> Void
 }
 
-extension NotificationService: DependencyKey {
-    static let liveValue = NotificationService(
+extension NotificationRepository: DependencyKey {
+    static let liveValue = NotificationRepository(
         requestAuthorization: {
-            try await UNUserNotificationCenter.current().requestAuthorization(
-                options: [.alert, .badge, .sound]
-            )
+            do {
+                try await UNUserNotificationCenter.current().requestAuthorization(
+                    options: [.alert, .badge, .sound]
+                )
+            } catch {
+                throw DomainError.notificationNotAuthorized
+            }
         },
         requestNotification: { title, body, categoryIdentifier in
             let identifier = UUID().uuidString
@@ -44,18 +48,16 @@ extension NotificationService: DependencyKey {
     )
 }
 
-nonisolated extension NotificationService: TestDependencyKey {
-    static let testValue = NotificationService(
+nonisolated extension NotificationRepository: TestDependencyKey {
+    static let testValue = NotificationRepository(
         requestAuthorization: {
-            false
         },
         requestNotification: { _, _, _ in
         }
     )
 
-    static let previewValue = NotificationService(
+    static let previewValue = NotificationRepository(
         requestAuthorization: {
-            false
         },
         requestNotification: { _, _, _ in
         }
@@ -63,8 +65,8 @@ nonisolated extension NotificationService: TestDependencyKey {
 }
 
 extension DependencyValues {
-    nonisolated var notificationService: NotificationService {
-        get { self[NotificationService.self] }
-        set { self[NotificationService.self] = newValue }
+    nonisolated var notificationRepository: NotificationRepository {
+        get { self[NotificationRepository.self] }
+        set { self[NotificationRepository.self] = newValue }
     }
 }
