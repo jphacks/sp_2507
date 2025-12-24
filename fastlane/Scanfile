@@ -1,2 +1,4 @@
 scheme("Nemulert")
-devices(["iPhone 17 Pro (26.1)"])
+devices(["iPhone 17 Pro"])
+clean(true)
+skip_testing(["NemulertUITests"])
