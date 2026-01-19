@@ -12,7 +12,9 @@ struct ConnectionStateView: View {
 
     var body: some View {
         Image(systemName: "airpods.pro")
+            .resizable()
             .foregroundColor(isConnected ? .primary : .red)
+            .frame(width: 130, height: 80)
     }
 }
 
