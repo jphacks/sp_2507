@@ -29,7 +29,7 @@ struct DetectingScreen: View {
                 }
 
             }
-        Image(systemName: "airpods.pro")
+        ConnectionStateView(isConnected: model.isConnected)
     }
 }
 
