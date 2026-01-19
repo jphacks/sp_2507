@@ -29,7 +29,7 @@ struct DetectingScreen: View {
                 }
 
             }
-        Image("airpods.pro.svg")
+        Image(systemName: "airpods.pro")
     }
 }
 
