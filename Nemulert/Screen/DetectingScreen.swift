@@ -12,23 +12,26 @@ struct DetectingScreen: View {
     @State private var model = DetectingModel()
 
     var body: some View {
-        LottieView(name: "Nemulert")
-            .padding()
-            .onAppear {
-                model.onAppear()
-            }
-            .onChange(of: scenePhase) { oldPhase, newPhase in
-                switch (oldPhase, newPhase) {
-                case (.inactive, .active), (.background, .active):
-                    Task {
-                        await model.onSceneChanged()
+        VStack{
+            LottieView(name: "Nemulert")
+                .padding()
+                .onAppear {
+                    model.onAppear()
+                }
+                .onChange(of: scenePhase) { oldPhase, newPhase in
+                    switch (oldPhase, newPhase) {
+                    case (.inactive, .active), (.background, .active):
+                        Task {
+                            await model.onSceneChanged()
+                        }
+
+                    default:
+                        break
                     }
 
-                default:
-                    break
                 }
-
-            }
+            ConnectionStateView(isConnected: model.isConnected)
+        }
     }
 }
 
