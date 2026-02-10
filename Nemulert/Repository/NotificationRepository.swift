@@ -15,7 +15,7 @@ nonisolated struct NotificationRepository {
     var requestNotification: @Sendable (_ title: String, _ body: String, _ categoryIdentifier: String) async throws -> Void
 }
 
-extension NotificationRepository: DependencyKey {
+nonisolated extension NotificationRepository: DependencyKey {
     static let liveValue = NotificationRepository(
         requestAuthorization: {
             do {
@@ -64,8 +64,8 @@ nonisolated extension NotificationRepository: TestDependencyKey {
     )
 }
 
-extension DependencyValues {
-    nonisolated var notificationRepository: NotificationRepository {
+nonisolated extension DependencyValues {
+    var notificationRepository: NotificationRepository {
         get { self[NotificationRepository.self] }
         set { self[NotificationRepository.self] = newValue }
     }

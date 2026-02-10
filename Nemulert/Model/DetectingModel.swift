@@ -33,7 +33,7 @@ final class DetectingModel {
             oldValue?.cancel()
         }
     }
-    
+
     /// 画面が表示された時
     ///
     /// アラームと通知の権限をリクエストし、タスクを起動する。

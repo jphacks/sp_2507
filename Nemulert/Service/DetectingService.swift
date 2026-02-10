@@ -102,14 +102,13 @@ final actor DetectingService {
     /// AirPods 接続状態、モーションデータを受け取るタスクを再起動する。
     func restartTasks() async throws {
         dozing = .idle
-        try restartConnectionUpdateTask()
+        try await restartConnectionUpdateTask()
         try await restartMotionUpdateTask()
     }
 
     /// AirPods 接続状態を受け取るタスクを再起動
-    private func restartConnectionUpdateTask() throws {
+    private func restartConnectionUpdateTask() async throws {
         let updates = try motionRepository.connectionUpdates()
-
         updateConnectionTask = Task {
             for await isConnected in updates {
                 connectionContinuation.yield(isConnected)
@@ -125,6 +124,7 @@ final actor DetectingService {
         let updates = try await motionRepository.motionUpdates(queueName: queueName)
         updateMotionTask = Task {
             for try await motion in updates {
+                motionContinuation.yield(motion)
                 try await handleMotion(motion)
             }
         }

@@ -18,7 +18,7 @@ nonisolated struct AlarmRepository {
     var cancelAllAlarms: @Sendable () async throws -> Void
 }
 
-extension AlarmRepository: DependencyKey {
+nonisolated extension AlarmRepository: DependencyKey {
     static let liveValue = AlarmRepository(
         requestAuthorization: {
             do {
@@ -67,7 +67,7 @@ extension AlarmRepository: DependencyKey {
                 countdownDuration: countdownDuration,
                 attributes: attributes
             )
-            try await cancelAllAlarms()
+            try cancelAllAlarms()
             _ = try await AlarmManager.shared.schedule(
                 id: id,
                 configuration: configuration
@@ -75,7 +75,7 @@ extension AlarmRepository: DependencyKey {
         },
         cancelAllAlarms: {
             do {
-                try await cancelAllAlarms()
+                try cancelAllAlarms()
             } catch {
                 throw DomainError.failedToCancelAlarm
             }
@@ -115,8 +115,8 @@ nonisolated extension AlarmRepository: TestDependencyKey {
     )
 }
 
-extension DependencyValues {
-    nonisolated var alarmRepository: AlarmRepository {
+nonisolated extension DependencyValues {
+    var alarmRepository: AlarmRepository {
         get { self[AlarmRepository.self] }
         set { self[AlarmRepository.self] = newValue }
     }

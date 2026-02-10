@@ -17,7 +17,7 @@ nonisolated struct DozingDetectionRepository {
     var predict: @Sendable (_ motions: [DeviceMotion]) async throws -> DozingResult
 }
 
-extension DozingDetectionRepository: DependencyKey {
+nonisolated extension DozingDetectionRepository: DependencyKey {
     static let liveValue = DozingDetectionRepository(
         predict: { motions in
             let configuration = MLModelConfiguration()
@@ -62,8 +62,8 @@ nonisolated extension DozingDetectionRepository: TestDependencyKey {
     )
 }
 
-extension DependencyValues {
-    nonisolated var dozingDetectionRepository: DozingDetectionRepository {
+nonisolated extension DependencyValues {
+    var dozingDetectionRepository: DozingDetectionRepository {
         get { self[DozingDetectionRepository.self] }
         set { self[DozingDetectionRepository.self] = newValue }
     }

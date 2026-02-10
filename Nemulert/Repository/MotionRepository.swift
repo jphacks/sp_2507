@@ -17,7 +17,7 @@ nonisolated struct MotionRepository {
     var motionUpdates: @Sendable (_ queueName: String) async throws -> AsyncThrowingStream<DeviceMotion, Error>
 }
 
-extension MotionRepository: DependencyKey {
+nonisolated extension MotionRepository: DependencyKey {
     static let liveValue = MotionRepository(
         connectionUpdates: {
             HeadphoneMotionManager().connectionUpdates()
@@ -75,8 +75,8 @@ nonisolated extension MotionRepository: TestDependencyKey {
     )
 }
 
-extension DependencyValues {
-    nonisolated var motionRepository: MotionRepository {
+nonisolated extension DependencyValues {
+    var motionRepository: MotionRepository {
         get { self[MotionRepository.self] }
         set { self[MotionRepository.self] = newValue }
     }
