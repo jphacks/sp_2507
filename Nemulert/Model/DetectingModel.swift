@@ -11,144 +11,72 @@ import SwiftUI
 
 @Observable
 final class DetectingModel {
-    @ObservationIgnored
     private(set) var isConnected: Bool = false
-    @ObservationIgnored
-    private(set) var motion: DeviceMotion?
-    @ObservationIgnored
-    private(set) var motions: [DeviceMotion] = []
-    @ObservationIgnored
-    private(set) var dozing: Dozing = .idle
-    @ObservationIgnored
-    private(set) var dozingCount: Int = 0
-
-    @ObservationIgnored
-    let windowSize: Int = 130
-    @ObservationIgnored
-    private let queueName: String = "com.kantacky.Nemulert.headphone_motion_update"
-
-    @ObservationIgnored
-    private var updateConnectionTask: Task<Void, Error>? {
-        didSet {
-            oldValue?.cancel()
+    private(set) var isAlarmAuthorized: Bool = false
+    private(set) var isNotificationAuthorized: Bool = false
+    var isAlertPresented: Bool {
+        get {
+            domainError != nil
+        }
+        set {
+            if !newValue {
+                domainError = nil
+            }
         }
     }
-    @ObservationIgnored
-    private var updateMotionTask: Task<Void, Error>? {
+    private(set) var domainError: DomainError?
+
+    private let detectingService = DetectingService()
+
+    private var connectionTask: Task<Void, Never>? {
         didSet {
             oldValue?.cancel()
         }
     }
 
-    @ObservationIgnored
-    @Dependency(\.uuid) private var uuid
-    @ObservationIgnored
-    @Dependency(\.alarmService) private var alarmService
-    @ObservationIgnored
-    @Dependency(\.dozingDetectionService) private var dozingDetectionService
-    @ObservationIgnored
-    @Dependency(\.motionService) private var motionService
-    @ObservationIgnored
-    @Dependency(\.notificationService) private var notificationService
-
-    func onAppear() {
-        Task {
-            do {
-                let authorization = try await alarmService.requestAuthorization()
-                Logger.info("Alarm authorization status: \(authorization)")
-            } catch {
-                Logger.error(error)
-            }
-
-            do {
-                let isAuthorized = try await notificationService.requestAuthorization()
-                Logger.info("Notification authorization granted: \(isAuthorized)")
-            } catch {
-                Logger.error(error)
-            }
-        }
-
-        restartConnectionUpdateTask()
-        restartMotionUpdateTask()
-    }
-
-    func onSceneChanged() async {
+    /// 画面が表示された時
+    ///
+    /// アラームと通知の権限をリクエストし、タスクを起動する。
+    func onAppear() async {
         do {
-            try await alarmService.cancelAllAlarms()
+            try await detectingService.requestAlarmAuthorization()
+            isAlarmAuthorized = true
         } catch {
             Logger.error(error)
+            isAlarmAuthorized = false
         }
-        restartConnectionUpdateTask()
-        restartMotionUpdateTask()
-    }
+        do {
+            try await detectingService.requestNotificationAuthorization()
+            isNotificationAuthorized = true
+        } catch {
+            Logger.error(error)
+            isNotificationAuthorized = false
+        }
 
-    private func restartConnectionUpdateTask() {
-        dozing = .idle
-        dozingCount = 0
-        updateConnectionTask = Task {
-            do {
-                for await isConnected in try motionService.connectionUpdates() {
-                    Logger.info("Headphone is \(isConnected ? "connected" : "disconnected")")
-                    try handleConnection(isConnected)
-                }
-            } catch {
-                Logger.error(error)
-                throw error
+        do {
+            try await detectingService.restartTasks()
+        } catch {
+            Logger.error(error)
+            domainError = DomainError(error)
+        }
+
+        connectionTask = Task {
+            for await isConnected in detectingService.connectionStream {
+                self.isConnected = isConnected
             }
         }
     }
-
-    private func restartMotionUpdateTask() {
-        updateMotionTask = Task {
-            do {
-                for try await motion in try await motionService.motionUpdates(queueName: queueName) {
-                    try await handleMotion(motion)
-                }
-            } catch {
-                Logger.error(error)
-                throw error
-            }
-        }
-    }
-
-    private func handleConnection(_ isConnected: Bool) throws {
-        self.isConnected = isConnected
-
-        if isConnected {
-            restartMotionUpdateTask()
-        }
-    }
-
-    private func handleMotion(_ motion: DeviceMotion) async throws {
-        self.motion = motion
-        guard try alarmService.getAlarms().isEmpty else {
-            return
-        }
-        motions.append(motion)
-        guard motions.count >= windowSize else {
-            return
-        }
-        let motions = Array(motions.prefix(windowSize))
-        self.motions.removeAll()
-        let result = try await dozingDetectionService.predict(motions: motions)
-        dozing = result.dozing
-        Logger.info("Dozing prediction: \(result.dozing)")
-
-        if result.dozing.isDozing && result.confidence > 0.99 {
-            try await incrementDozingCount()
-        }
-    }
-
-    private func incrementDozingCount() async throws {
-        dozingCount += 1
-        if self.dozingCount >= 2 {
-            _ = try await alarmService.scheduleAlarm(id: uuid())
-            _ = try await notificationService.requestNotification(
-                title: String(localized: "Are you dozing off?"),
-                body: String(localized: "Tap to continue working!"),
-                categoryIdentifier: "dozing"
-            )
-            dozingCount = 0
+    
+    /// シーンが切り替わった時
+    ///
+    /// 設定されている全てのアラームを解除し、タスクを再起動する。
+    func onSceneChanged() async {
+        do {
+            try await detectingService.cancelAllAlarms()
+            try await detectingService.restartTasks()
+        } catch {
+            Logger.error(error)
+            domainError = DomainError(error)
         }
     }
 }

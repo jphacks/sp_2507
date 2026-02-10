@@ -14,8 +14,8 @@ struct DetectingScreen: View {
     var body: some View {
         LottieView(name: "Nemulert")
             .padding()
-            .onAppear {
-                model.onAppear()
+            .task {
+                await model.onAppear()
             }
             .onChange(of: scenePhase) { oldPhase, newPhase in
                 switch (oldPhase, newPhase) {
@@ -27,8 +27,14 @@ struct DetectingScreen: View {
                 default:
                     break
                 }
-
             }
+            .alert(
+                model.domainError?.title ?? "",
+                isPresented: $model.isAlertPresented,
+                presenting: model.domainError?.description,
+                actions: { _ in },
+                message: Text.init
+            )
     }
 }
 

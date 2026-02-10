@@ -1,5 +1,5 @@
 //
-//  AlarmService.swift
+//  AlarmRepository.swift
 //  Nemulert
 //
 //  Created by Kanta Oikawa on 2025/10/29.
@@ -11,17 +11,29 @@ import DependenciesMacros
 import SwiftUI
 
 @DependencyClient
-nonisolated struct AlarmService {
-    var requestAuthorization: @Sendable () async throws -> AlarmManager.AuthorizationState
+nonisolated struct AlarmRepository {
+    var requestAuthorization: @Sendable () async throws -> Void
     var getAlarms: @Sendable () throws -> [Alarm]
     var scheduleAlarm: @Sendable (_ id: Alarm.ID) async throws -> Void
     var cancelAllAlarms: @Sendable () async throws -> Void
 }
 
-extension AlarmService: DependencyKey {
-    static let liveValue = AlarmService(
+nonisolated extension AlarmRepository: DependencyKey {
+    static let liveValue = AlarmRepository(
         requestAuthorization: {
-            try await AlarmManager.shared.requestAuthorization()
+            do {
+                let status = try await AlarmManager.shared.requestAuthorization()
+
+                switch status {
+                case .authorized:
+                    return
+
+                default:
+                    throw DomainError.alarmNotAuthorized
+                }
+            } catch {
+                throw DomainError.alarmNotAuthorized
+            }
         },
         getAlarms: {
             try AlarmManager.shared.alarms
@@ -55,14 +67,18 @@ extension AlarmService: DependencyKey {
                 countdownDuration: countdownDuration,
                 attributes: attributes
             )
-            try await cancelAllAlarms()
+            try cancelAllAlarms()
             _ = try await AlarmManager.shared.schedule(
                 id: id,
                 configuration: configuration
             )
         },
         cancelAllAlarms: {
-            try await cancelAllAlarms()
+            do {
+                try cancelAllAlarms()
+            } catch {
+                throw DomainError.failedToCancelAlarm
+            }
         }
     )
 
@@ -73,10 +89,9 @@ extension AlarmService: DependencyKey {
     }
 }
 
-nonisolated extension AlarmService: TestDependencyKey {
-    static let testValue = AlarmService(
+nonisolated extension AlarmRepository: TestDependencyKey {
+    static let testValue = AlarmRepository(
         requestAuthorization: {
-            .notDetermined
         },
         getAlarms: {
             []
@@ -87,9 +102,8 @@ nonisolated extension AlarmService: TestDependencyKey {
         }
     )
 
-    static let previewValue = AlarmService(
+    static let previewValue = AlarmRepository(
         requestAuthorization: {
-            .notDetermined
         },
         getAlarms: {
             []
@@ -101,9 +115,9 @@ nonisolated extension AlarmService: TestDependencyKey {
     )
 }
 
-extension DependencyValues {
-    nonisolated var alarmService: AlarmService {
-        get { self[AlarmService.self] }
-        set { self[AlarmService.self] = newValue }
+nonisolated extension DependencyValues {
+    var alarmRepository: AlarmRepository {
+        get { self[AlarmRepository.self] }
+        set { self[AlarmRepository.self] = newValue }
     }
 }

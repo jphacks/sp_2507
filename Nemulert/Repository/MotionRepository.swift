@@ -1,5 +1,5 @@
 //
-//  MotionService.swift
+//  MotionRepository.swift
 //  Nemulert
 //
 //  Created by Kanta Oikawa on 2025/10/29.
@@ -12,13 +12,13 @@ import HeadphoneMotion
 import UserNotifications
 
 @DependencyClient
-nonisolated struct MotionService {
+nonisolated struct MotionRepository {
     var connectionUpdates: @Sendable () throws -> AsyncStream<Bool>
     var motionUpdates: @Sendable (_ queueName: String) async throws -> AsyncThrowingStream<DeviceMotion, Error>
 }
 
-extension MotionService: DependencyKey {
-    static let liveValue = MotionService(
+nonisolated extension MotionRepository: DependencyKey {
+    static let liveValue = MotionRepository(
         connectionUpdates: {
             HeadphoneMotionManager().connectionUpdates()
         },
@@ -47,8 +47,8 @@ extension MotionService: DependencyKey {
     )
 }
 
-nonisolated extension MotionService: TestDependencyKey {
-    static let testValue = MotionService(
+nonisolated extension MotionRepository: TestDependencyKey {
+    static let testValue = MotionRepository(
         connectionUpdates: {
             AsyncStream<Bool> { continuation in
                 continuation.finish()
@@ -61,7 +61,7 @@ nonisolated extension MotionService: TestDependencyKey {
         }
     )
 
-    static let previewValue = MotionService(
+    static let previewValue = MotionRepository(
         connectionUpdates: {
             AsyncStream<Bool> { continuation in
                 continuation.finish()
@@ -75,9 +75,9 @@ nonisolated extension MotionService: TestDependencyKey {
     )
 }
 
-extension DependencyValues {
-    nonisolated var motionService: MotionService {
-        get { self[MotionService.self] }
-        set { self[MotionService.self] = newValue }
+nonisolated extension DependencyValues {
+    var motionRepository: MotionRepository {
+        get { self[MotionRepository.self] }
+        set { self[MotionRepository.self] = newValue }
     }
 }
